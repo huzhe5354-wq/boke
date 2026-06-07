@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HZ | Management Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/js/tailwind.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body class="min-h-screen bg-[#f3f5f8] text-slate-800 font-sans selection:bg-indigo-100 selection:text-indigo-600">
+
+<div class="flex h-screen overflow-hidden">
+    <!-- 1. 左侧高端侧边栏导航 -->
+    <aside class="w-64 bg-white/70 backdrop-blur-2xl border-r border-slate-200/50 flex flex-col shrink-0">
+        <div class="p-8">
+            <div class="flex items-center space-x-3 mb-10">
+                <div class="w-10 h-10 rounded-2xl bg-indigo-600 flex items-center justify-center font-black text-white shadow-lg shadow-indigo-600/20">
+                    HZ
+                </div>
+                <div>
+                    <h1 class="font-black text-sm tracking-tight">管理大屏</h1>
+                    <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Core System v2.0</p>
+                </div>
+            </div>
+
+            <nav class="space-y-1">
+                <button id="tab-overview" onclick="switchTab('overview')" class="tab-btn active w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-xs font-bold transition-all">
+                    <i class="fa-solid fa-gauge-high w-4"></i>
+                    <span>数据概览</span>
+                </button>
+                <button id="tab-projects" onclick="switchTab('projects')" class="tab-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-xs font-bold transition-all">
+                    <i class="fa-solid fa-cubes w-4"></i>
+                    <span>项目管理</span>
+                </button>
+                <button id="tab-articles" onclick="switchTab('articles')" class="tab-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-xs font-bold transition-all">
+                    <i class="fa-solid fa-feather w-4"></i>
+                    <span>文章归档</span>
+                </button>
+                <button id="tab-music" onclick="switchTab('music')" class="tab-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-xs font-bold transition-all">
+                    <i class="fa-solid fa-music w-4"></i>
+                    <span>音乐库</span>
+                </button>
+                <button id="tab-insights" onclick="switchTab('insights')" class="tab-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-xs font-bold transition-all">
+                    <i class="fa-solid fa-lightbulb w-4"></i>
+                    <span>感悟管理</span>
+                </button>
+                <button id="tab-carousel" onclick="switchTab('carousel')" class="tab-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-xs font-bold transition-all">
+                    <i class="fa-solid fa-images w-4"></i>
+                    <span>轮播配置</span>
+                </button>
+                <button id="tab-datacenter" onclick="switchTab('datacenter')" class="tab-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-xs font-bold transition-all">
+                    <i class="fa-solid fa-chart-column w-4"></i>
+                    <span>数据中心</span>
+                </button>
+                <button id="tab-local" onclick="switchTab('local')" class="tab-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-xs font-bold transition-all">
+                    <i class="fa-solid fa-database w-4"></i>
+                    <span>本地拟态库</span>
+                </button>
+                <button id="tab-settings" onclick="switchTab('settings')" class="tab-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-xs font-bold transition-all">
+                    <i class="fa-solid fa-gear w-4"></i>
+                    <span>站点设置</span>
+                </button>
+            </nav>
+        </div>
+
+        <div class="mt-auto p-6 space-y-4">
+            <div class="bg-indigo-50/50 rounded-2xl p-4 border border-indigo-100/50">
+                <p class="text-[9px] font-black text-indigo-400 uppercase mb-2">Security Status</p>
+                <div class="flex items-center space-x-2">
+                    <span id="auth-dot" class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    <span id="auth-text" class="text-[10px] text-emerald-600 font-bold">已连接本地服务</span>
+                </div>
+            </div>
+            <button onclick="handleLogout()" class="w-full flex items-center justify-center space-x-2 px-4 py-3 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition-all active:scale-95 shadow-lg shadow-slate-900/10">
+                <i class="fa-solid fa-power-off"></i>
+                <span>退出登录</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- 2. 主内容工作区 -->
+    <main class="flex-1 overflow-y-auto bg-[#f3f5f8] p-8 lg:p-12 relative">
+        <header class="flex justify-between items-center mb-10">
+            <div>
+                <h2 class="text-2xl font-black text-slate-800 tracking-tight">Dashboard Overview</h2>
+                <p class="text-xs text-slate-400 font-bold mt-1">欢迎回来，胡哲。这是您今日的系统运行状态。</p>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="/index" target="_blank" class="px-5 py-2.5 bg-white border border-slate-200 rounded-xl text-[11px] font-bold text-slate-600 hover:bg-slate-50 transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    查看前台
+                </a>
+                <button onclick="exportSnapshot()" class="px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-[11px] font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-600/10 flex items-center gap-2">
+                    <i class="fa-solid fa-download"></i>
+                    导出快照
+                </button>
+            </div>
+        </header>
+
+        <!-- Tab 1: 数据概览 -->
+        <div id="panel-overview" class="tab-content space-y-10">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="glass-panel p-8 rounded-3xl border border-white shadow-sm">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center text-lg">
+                            <i class="fa-solid fa-cubes"></i>
+                        </div>
+                        <span class="text-[10px] text-emerald-500 font-black">+2 This Month</span>
+                    </div>
+                    <div class="text-3xl font-black text-slate-800 mb-1" id="stat-projects">0</div>
+                    <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">展示项目</p>
+                </div>
+                <div class="glass-panel p-8 rounded-3xl border border-white shadow-sm">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-10 h-10 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center text-lg">
+                            <i class="fa-solid fa-feather"></i>
+                        </div>
+                        <span class="text-[10px] text-slate-400 font-black">Archive Stats</span>
+                    </div>
+                    <div class="text-3xl font-black text-slate-800 mb-1" id="stat-articles">0</div>
+                    <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">技术博文</p>
+                </div>
+                <div class="glass-panel p-8 rounded-3xl border border-white shadow-sm">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-10 h-10 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center text-lg">
+                            <i class="fa-solid fa-comment-dots"></i>
+                        </div>
+                        <span class="text-[10px] text-rose-500 font-black">Need Review</span>
+                    </div>
+                    <div class="text-3xl font-black text-slate-800 mb-1" id="stat-messages">0</div>
+                    <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">访客留言</p>
+                </div>
+                <div class="glass-panel p-8 rounded-3xl border border-white shadow-sm">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-lg">
+                            <i class="fa-solid fa-bolt"></i>
+                        </div>
+                        <span class="text-[10px] text-emerald-500 font-black">System Live</span>
+                    </div>
+                    <div class="text-3xl font-black text-slate-800 mb-1">99.9%</div>
+                    <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">服务可用性</p>
+                </div>
+            </div>
+
+            <!-- 最新留言审查 -->
+            <div class="glass-panel p-8 rounded-[40px] border border-white shadow-xl">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 class="text-lg font-black text-slate-800">访客留言板审查 / Visitor Feedback</h3>
+                    <div class="flex gap-2">
+                        <button onclick="createDemoMessage()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-[10px] font-bold transition-all">生成演示留言</button>
+                        <button onclick="clearAllDemoMessages()" class="px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl text-[10px] font-bold transition-all">清空全部</button>
+                    </div>
+                </div>
+                <div id="message-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- 由 JS 渲染 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 2: 项目管理 -->
+        <div id="panel-projects" class="tab-content hidden space-y-8">
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg font-black text-slate-800">项目展示档案库 / Projects Management</h3>
+                <button onclick="openProjectModal()" class="px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i>
+                    新增展示项目
+                </button>
+            </div>
+            <div id="project-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- 由 JS 渲染 -->
+            </div>
+        </div>
+
+        <!-- Tab 3: 文章管理 -->
+        <div id="panel-articles" class="tab-content hidden space-y-8">
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg font-black text-slate-800">技术文章发表 / Articles Archive</h3>
+                <button onclick="openArticleModal()" class="px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-pen-nib"></i>
+                    撰写新文章
+                </button>
+            </div>
+            <div id="article-list" class="space-y-4">
+                <!-- 由 JS 渲染 -->
+            </div>
+        </div>
+
+        <!-- Tab 4: 音乐库 -->
+        <div id="panel-music" class="tab-content hidden space-y-8">
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg font-black text-slate-800">音乐列表管理 / Music Library</h3>
+                <button onclick="openMusicModal()" class="px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i>
+                    添加音乐
+                </button>
+            </div>
+            <div id="music-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- 由 JS 渲染 -->
+            </div>
+        </div>
+
+        <!-- Tab 5: 感悟管理 -->
+        <div id="panel-insights" class="tab-content hidden space-y-8">
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg font-black text-slate-800">感悟格言管理 / Insights</h3>
+                <button onclick="openInsightModal()" class="px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i>
+                    添加感悟
+                </button>
+            </div>
+            <div id="insight-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- 由 JS 渲染 -->
+            </div>
+        </div>
+
+        <!-- Tab 6: 轮播图管理 -->
+        <div id="panel-carousel" class="tab-content hidden space-y-8">
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg font-black text-slate-800">轮播图配置 / Carousel Config</h3>
+                <button onclick="openCarouselModal()" class="px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i>
+                    添加轮播图
+                </button>
+            </div>
+            <div id="carousel-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- 由 JS 渲染 -->
+            </div>
+        </div>
+
+        <!-- Tab: 数据中心 -->
+        <div id="panel-datacenter" class="tab-content hidden space-y-10">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <h3 class="text-lg font-black text-slate-800">全站图表数据中心 / Data Center</h3>
+                    <span class="text-[9px] bg-slate-100 text-slate-400 px-2 py-0.5 rounded font-black uppercase tracking-widest">Raw Data Management</span>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="resetDataCenterToDefault()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-[10px] font-bold transition-all">重置为默认数据</button>
+                    <button onclick="saveAllChartData()" class="px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 transition-all flex items-center gap-2 shadow-lg shadow-indigo-600/20">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        保存并同步所有图表
+                    </button>
+                </div>
+            </div>
+
+            <!-- 数据中心主容器 -->
+            <div class="space-y-8">
+                <!-- 1. 成长维度数据 (列表化管理) -->
+                <div class="glass-panel rounded-[32px] border border-white overflow-hidden">
+                    <div class="bg-slate-50/50 px-8 py-5 border-b border-slate-100 flex justify-between items-center">
+                        <div>
+                            <h4 class="font-black text-sm text-slate-700 flex items-center gap-2">
+                                <i class="fa-solid fa-chart-line text-indigo-500"></i>
+                                成长演化数据列表 / Growth Data List
+                            </h4>
+                            <p class="text-[10px] text-slate-400 mt-0.5">对应前台 Line Chart，支持多维度趋势展示</p>
+                        </div>
+                        <button onclick="addGrowthRow()" class="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-[10px] font-bold text-indigo-600 hover:bg-indigo-50 transition-all flex items-center gap-1.5">
+                            <i class="fa-solid fa-plus"></i>
+                            添加年份数据
+                        </button>
+                    </div>
+                    <div class="p-8">
+                        <div class="grid grid-cols-5 gap-4 text-[10px] font-black text-slate-400 uppercase tracking-widest px-4 mb-4">
+                            <div>统计年份 (X轴)</div><div>书籍量</div><div>健康指数</div><div>技术储备</div><div class="text-center">操作</div>
+                        </div>
+                        <div id="growth-data-inputs" class="space-y-3">
+                            <!-- JS 渲染 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. 音乐风格分布 (列表化管理) -->
+                <div class="glass-panel rounded-[32px] border border-white overflow-hidden">
+                    <div class="bg-slate-50/50 px-8 py-5 border-b border-slate-100 flex justify-between items-center">
+                        <div>
+                            <h4 class="font-black text-sm text-slate-700 flex items-center gap-2">
+                                <i class="fa-solid fa-compact-disc text-blue-500"></i>
+                                音乐风格分布列表 / Music Styles List
+                            </h4>
+                            <p class="text-[10px] text-slate-400 mt-0.5">对应前台 Doughnut Chart，展示个人审美偏好</p>
+                        </div>
+                        <button onclick="addMusicStyleRow()" class="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-[10px] font-bold text-blue-600 hover:bg-blue-50 transition-all flex items-center gap-1.5">
+                            <i class="fa-solid fa-plus"></i>
+                            添加风格维度
+                        </button>
+                    </div>
+                    <div class="p-8">
+                        <div class="grid grid-cols-5 gap-4 text-[10px] font-black text-slate-400 uppercase tracking-widest px-4 mb-4">
+                            <div class="col-span-2">风格名称 (Label)</div><div class="col-span-2">占比权重 (Value)</div><div class="text-center">操作</div>
+                        </div>
+                        <div id="music-style-inputs" class="space-y-3">
+                            <!-- JS 渲染 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. 健康数据追踪 (列表化管理) -->
+                <div class="glass-panel rounded-[32px] border border-white overflow-hidden">
+                    <div class="bg-slate-50/50 px-8 py-5 border-b border-slate-100 flex justify-between items-center">
+                        <div>
+                            <h4 class="font-black text-sm text-slate-700 flex items-center gap-2">
+                                <i class="fa-solid fa-heart-pulse text-rose-500"></i>
+                                健康监测数据列表 / Health Metrics List
+                            </h4>
+                            <p class="text-[10px] text-slate-400 mt-0.5">对应前台 Bar Chart，同步周期性身体指标</p>
+                        </div>
+                        <button onclick="addHealthRow()" class="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-[10px] font-bold text-rose-600 hover:bg-rose-50 transition-all flex items-center gap-1.5">
+                            <i class="fa-solid fa-plus"></i>
+                            添加周期数据
+                        </button>
+                    </div>
+                    <div class="p-8">
+                        <div class="grid grid-cols-5 gap-4 text-[10px] font-black text-slate-400 uppercase tracking-widest px-4 mb-4">
+                            <div>统计周期 (Label)</div><div>睡眠时长(h)</div><div>有氧运动(m)</div><div>综合评分</div><div class="text-center">操作</div>
+                        </div>
+                        <div id="health-data-inputs" class="space-y-3">
+                            <!-- JS 渲染 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 7: 本地拟态库 (书架/习惯) -->
+        <div id="panel-local" class="tab-content hidden space-y-10">
+            <div id="insights-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                <!-- 由 JS 动态渲染总览卡片 -->
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                <div class="space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-black text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-book text-indigo-500"></i>
+                            <span>推荐书籍库 / Bookshelf</span>
+                        </h3>
+                        <button onclick="openGenericModal('books')" class="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-xl text-[10px] font-bold hover:bg-indigo-100 transition-all">新增书籍</button>
+                    </div>
+                    <div id="books-list" class="grid grid-cols-1 gap-4"></div>
+                </div>
+                <div class="space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-black text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-heart-pulse text-rose-500"></i>
+                            <span>自律习惯库 / Habits Tracker</span>
+                        </h3>
+                        <div class="flex gap-2">
+                            <button onclick="clearTodayHabits()" class="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl text-[10px] font-bold hover:bg-slate-200 transition-all">重置今日打卡</button>
+                            <button onclick="openGenericModal('habits')" class="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-xl text-[10px] font-bold hover:bg-indigo-100 transition-all">新增习惯</button>
+                        </div>
+                    </div>
+                    <div id="habits-list" class="grid grid-cols-1 gap-4"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 8: 站点设置 (重构：左侧导航栏，右侧主页卡片) -->
+        <div id="panel-settings" class="tab-content hidden space-y-8">
+            <div class="flex justify-between items-center mb-2">
+                <div class="flex items-center gap-3">
+                    <h3 class="text-xl font-black text-slate-800">全站核心配置中心 / <span class="text-sm font-bold text-slate-400">Site Configuration</span></h3>
+                    <span class="text-[9px] bg-indigo-50 text-indigo-500 px-2 py-0.5 rounded font-black uppercase tracking-widest">Global Control</span>
+                </div>
+                <button onclick="saveSettings()" class="px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 transition-all flex items-center gap-2 shadow-lg shadow-indigo-600/20 active:scale-95">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                    保存所有设置 / <span class="text-[9px] opacity-80">Save Settings</span>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                <!-- 左侧：侧边栏与品牌识别 (Navigation & Branding) -->
+                <div class="space-y-8">
+                    <div class="glass-panel p-8 rounded-[32px] border border-white shadow-sm">
+                        <h4 class="text-base font-black text-slate-700 mb-6 flex items-center gap-2">
+                            <i class="fa-solid fa-bars-staggered text-indigo-500"></i>
+                            侧边栏与品牌识别 / <span class="text-xs font-bold text-slate-400">Sidebar & Branding</span>
+                        </h4>
+                        <div class="space-y-6">
+                            <div class="flex items-center gap-6 p-5 bg-slate-50/50 rounded-2xl border border-slate-200/50">
+                                <div id="logo-preview" class="w-20 h-20 rounded-xl bg-white border-2 border-dashed border-slate-300 flex items-center justify-center text-xl text-slate-300 overflow-hidden shrink-0 shadow-inner">
+                                    <i class="fa-solid fa-image"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <label class="block mb-2">
+                                        <span class="text-sm font-black text-slate-700 block">站点头像标识</span>
+                                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Site Logo (Sidebar & Favicon)</span>
+                                    </label>
+                                    <input type="file" id="logo-file" accept="image/*" class="block w-full text-[10px] text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[9px] file:font-black file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100 cursor-pointer">
+                                    <input type="hidden" id="set-logoUrl">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block mb-2">
+                                    <span class="text-sm font-black text-slate-700 block">站点主名称</span>
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Site Name / Title</span>
+                                </label>
+                                <input id="set-siteName" type="text" placeholder="HZ | Portfolio" class="w-full bg-white/60 border border-slate-200/50 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 transition-all">
+                            </div>
+                            <div>
+                                <label class="block mb-2">
+                                    <span class="text-sm font-black text-slate-700 block">侧边栏副标题</span>
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Sidebar Subtitle</span>
+                                </label>
+                                <input id="set-siteSubtitle" type="text" placeholder="追求卓越的后端架构师" class="w-full bg-white/60 border border-slate-200/50 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 transition-all">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel p-8 rounded-[32px] border border-white shadow-sm">
+                        <h4 class="text-base font-black text-slate-700 mb-6 flex items-center gap-2">
+                            <i class="fa-solid fa-link text-emerald-500"></i>
+                            社交与外部链接 / <span class="text-xs font-bold text-slate-400">Social & Links</span>
+                        </h4>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block mb-2">
+                                    <span class="text-sm font-black text-slate-700 block">GitHub 个人主页</span>
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">GitHub Profile URL</span>
+                                </label>
+                                <input id="set-github" type="text" placeholder="https://github.com/yourname" class="w-full bg-white/60 border border-slate-200/50 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 transition-all">
+                            </div>
+                            <div>
+                                <label class="block mb-2">
+                                    <span class="text-sm font-black text-slate-700 block">联系电子邮箱</span>
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Admin Contact Email</span>
+                                </label>
+                                <input id="set-email" type="email" placeholder="admin@example.com" class="w-full bg-white/60 border border-slate-200/50 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 transition-all">
+                            </div>
+                            <div>
+                                <label class="block mb-2">
+                                    <span class="text-sm font-black text-slate-700 block">外部博客/个人网站</span>
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">External Blog / Site</span>
+                                </label>
+                                <input id="set-blog" type="text" placeholder="https://blog.example.com" class="w-full bg-white/60 border border-slate-200/50 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 transition-all">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右侧：主页大屏头像卡片配置 (Hero Card Configuration) -->
+                <div class="space-y-8">
+                    <div class="glass-panel p-8 rounded-[32px] border border-white shadow-sm">
+                        <h4 class="text-base font-black text-slate-700 mb-6 flex items-center gap-2">
+                            <i class="fa-solid fa-id-badge text-blue-500"></i>
+                            主页头像卡片配置 / <span class="text-xs font-bold text-slate-400">Hero Card Configuration</span>
+                        </h4>
+                        <div class="space-y-6">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block mb-2">
+                                        <span class="text-sm font-black text-slate-700 block">主屏问候语</span>
+                                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Hero Greeting</span>
+                                    </label>
+                                    <input id="set-heroGreeting" type="text" placeholder="你好，我是" class="w-full bg-white/60 border border-slate-200/50 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 transition-all">
+                                </div>
+                                <div>
+                                    <label class="block mb-2">
+                                        <span class="text-sm font-black text-slate-700 block">打字机前缀</span>
+                                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Typewriter Prefix</span>
+                                    </label>
+                                    <input id="set-typewriterPrefix" type="text" placeholder="我是一名" class="w-full bg-white/60 border border-slate-200/50 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 transition-all">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block mb-2">
+                                    <span class="text-sm font-black text-slate-700 block">个人核心能力描述</span>
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Hero Description / Biography</span>
+                                </label>
+                                <textarea id="set-heroDesc" rows="5" placeholder="精通 SpringBoot + Redis 高吞吐后端系统研发..." class="w-full bg-white/60 border border-slate-200/50 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 transition-all leading-relaxed"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel p-8 rounded-[32px] border border-white shadow-sm">
+                        <h4 class="text-base font-black text-slate-700 mb-6 flex items-center gap-2">
+                            <i class="fa-solid fa-keyboard text-amber-500"></i>
+                            打字机交互参数 / <span class="text-xs font-bold text-slate-400">Typewriter Dynamics</span>
+                        </h4>
+                        <div class="space-y-5">
+                            <div>
+                                <label class="block mb-2">
+                                    <span class="text-sm font-black text-slate-700 block">打字文本内容 (每行一条)</span>
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Typewriter Strings</span>
+                                </label>
+                                <textarea id="set-typewriterStrings" rows="4" placeholder="后端开发工程师&#10;分布式架构探索者" class="w-full bg-white/60 border border-slate-200/50 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 transition-all font-mono"></textarea>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block mb-2">
+                                        <span class="text-sm font-black text-slate-700 block">打字速度 (ms)</span>
+                                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Type Speed</span>
+                                    </label>
+                                    <input id="set-typeSpeed" type="number" value="60" class="w-full bg-white/60 border border-slate-200/50 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 transition-all">
+                                </div>
+                                <div>
+                                    <label class="block mb-2">
+                                        <span class="text-sm font-black text-slate-700 block">回退速度 (ms)</span>
+                                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Back Speed</span>
+                                    </label>
+                                    <input id="set-backSpeed" type="number" value="30" class="w-full bg-white/60 border border-slate-200/50 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 transition-all">
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3 p-4 bg-indigo-50/30 rounded-xl border border-indigo-100/50">
+                                <input type="checkbox" id="set-typewriterLoop" class="w-5 h-5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                                <label for="set-typewriterLoop" class="flex flex-col cursor-pointer">
+                                    <span class="text-sm font-black text-slate-700">开启无限循环播放</span>
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase">Enable Infinite Loop Animation</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 底部操作栏 (悬浮感) -->
+            <div class="sticky bottom-4 left-0 right-0 pt-4 pb-2 z-20">
+                <div class="glass-panel px-8 py-5 rounded-3xl border border-white shadow-2xl flex justify-between items-center bg-white/80 backdrop-blur-md">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-500">
+                            <i class="fa-solid fa-info text-xs"></i>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-xs font-black text-slate-600">实时部署生效</span>
+                            <span class="text-[9px] font-bold text-slate-400 uppercase">Changes will be deployed instantly.</span>
+                        </div>
+                    </div>
+                    <button onclick="saveSettings()" class="px-10 py-3.5 bg-slate-900 text-white rounded-2xl text-sm font-black hover:bg-slate-800 transition-all flex items-center gap-3 shadow-xl shadow-slate-900/10 active:scale-95 group">
+                        <span>立即保存并部署站点配置 / <span class="text-[10px] font-bold opacity-60">Deploy Now</span></span>
+                        <i class="fa-solid fa-paper-plane text-xs group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- ==========================================
+     MODALS & OVERLAYS
+     ========================================== -->
+
+<!-- 项目管理 Modal -->
+<div id="project-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-50 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
+    <div class="glass-panel p-10 rounded-[40px] max-w-2xl w-full mx-4 relative transform scale-95 transition-all duration-300 border border-white">
+        <button onclick="closeProjectModal()" class="absolute top-8 right-8 w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition-all active:scale-95">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <h3 id="proj-modal-title" class="text-xl font-black text-slate-800 mb-8">项目归档详情</h3>
+        <form id="project-form" onsubmit="saveProject(event)" class="space-y-6">
+            <input type="hidden" id="proj-id">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="col-span-2">
+                    <label class="text-[10px] font-bold text-slate-500 block mb-2">项目名称</label>
+                    <input id="proj-title" required class="w-full bg-white/60 border border-slate-200/50 rounded-2xl px-5 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 block mb-2">核心技术栈</label>
+                    <input id="proj-tech" placeholder="SpringBoot, Redis..." class="w-full bg-white/60 border border-slate-200/50 rounded-2xl px-5 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 block mb-2">封面图上传</label>
+                    <input type="file" id="proj-image-file" class="text-[10px] text-slate-500">
+                    <input type="hidden" id="proj-image-url">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 block mb-2">GitHub 地址</label>
+                    <input id="proj-github" class="w-full bg-white/60 border border-slate-200/50 rounded-2xl px-5 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 block mb-2">在线体验 Demo</label>
+                    <input id="proj-demo" class="w-full bg-white/60 border border-slate-200/50 rounded-2xl px-5 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div class="col-span-2">
+                    <label class="text-[10px] font-bold text-slate-500 block mb-2">项目详细描述</label>
+                    <textarea id="proj-desc" rows="4" class="w-full bg-white/60 border border-slate-200/50 rounded-2xl px-5 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500"></textarea>
+                </div>
+            </div>
+            <div class="pt-4">
+                <button type="submit" class="w-full py-4 bg-indigo-600 text-white rounded-2xl font-black text-sm hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-600/20 active:scale-[0.98]">
+                    确认保存项目档案
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 文章管理 Modal -->
+<div id="article-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-50 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
+    <div class="glass-panel p-10 rounded-[40px] max-w-4xl w-full mx-4 relative transform scale-95 transition-all duration-300 border border-white">
+        <button onclick="closeArticleModal()" class="absolute top-8 right-8 w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition-all active:scale-95">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <h3 id="art-modal-title" class="text-xl font-black text-slate-800 mb-8">撰写技术文章</h3>
+        <form id="article-form" onsubmit="saveArticle(event)" class="space-y-6">
+            <input type="hidden" id="art-id">
+            <div class="space-y-4">
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 block mb-2">文章标题</label>
+                    <input id="art-title" required class="w-full bg-white/60 border border-slate-200/50 rounded-2xl px-5 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 block mb-2">内容摘要</label>
+                    <input id="art-summary" required class="w-full bg-white/60 border border-slate-200/50 rounded-2xl px-5 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 block mb-2">正文内容 (支持 HTML)</label>
+                    <textarea id="art-content" rows="12" required class="w-full bg-white/60 border border-slate-200/50 rounded-2xl px-5 py-3 text-sm text-slate-800 font-mono focus:outline-none focus:border-indigo-500"></textarea>
+                </div>
+            </div>
+            <div class="pt-4">
+                <button type="submit" class="w-full py-4 bg-indigo-600 text-white rounded-2xl font-black text-sm hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-600/20 active:scale-[0.98]">
+                    立即发布文章
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 音乐管理 Modal -->
+<div id="music-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-50 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
+    <div class="glass-panel p-10 rounded-[40px] max-w-lg w-full mx-4 relative transform scale-95 transition-all duration-300 border border-white">
+        <button onclick="closeMusicModal()" class="absolute top-8 right-8 w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition-all active:scale-95">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <h3 id="music-modal-title" class="text-xl font-black text-slate-800 mb-8">音乐管理</h3>
+        <form id="music-form" class="space-y-6">
+            <input type="hidden" id="music-id">
+            <div class="grid grid-cols-1 gap-6">
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 block mb-2">曲目标题</label>
+                    <input id="music-title" required class="w-full bg-white/60 border border-slate-200/50 rounded-2xl px-5 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 block mb-2">艺术家 / 描述</label>
+                    <input id="music-artist" required class="w-full bg-white/60 border border-slate-200/50 rounded-2xl px-5 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 block mb-2">播放排序 (越大越前)</label>
+                    <input id="music-sort" type="number" value="0" class="w-full bg-white/60 border border-slate-200/50 rounded-2xl px-5 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 block mb-2">音乐文件上传</label>
+                    <input type="file" id="music-file" accept="audio/*" class="text-[10px] w-full">
+                    <input type="hidden" id="music-url">
+                    <p class="text-[9px] text-slate-400 mt-2 italic">优先上传文件，若无文件则保留原有 URL。</p>
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 block mb-2">歌曲封面上传 / Cover</label>
+                    <div class="flex items-center gap-4">
+                        <div id="music-cover-preview" class="w-16 h-16 rounded-xl bg-slate-100 border-2 border-dashed border-slate-200 flex items-center justify-center overflow-hidden shrink-0 shadow-inner">
+                            <i class="fa-solid fa-music text-slate-300"></i>
+                        </div>
+                        <div class="flex-1">
+                            <input type="file" id="music-cover-file" accept="image/*" class="text-[10px] w-full">
+                            <input type="hidden" id="music-cover-url">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pt-4">
+                <button type="submit" class="w-full py-4 bg-indigo-600 text-white rounded-2xl font-black text-sm hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-600/20 active:scale-[0.98]">
+                    确认保存音乐
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 感悟管理 Modal -->
+<div id="insight-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-50 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
+    <div class="glass-panel p-10 rounded-[40px] max-w-lg w-full mx-4 relative transform scale-95 transition-all duration-300 border border-white">
+        <button onclick="closeInsightModal()" class="absolute top-8 right-8 w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition-all active:scale-95">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <h3 id="insight-modal-title" class="text-xl font-black text-slate-800 mb-8">感悟格言管理</h3>
+        <form id="insight-form" class="space-y-6">
+            <input type="hidden" id="insight-id">
+            <div class="grid grid-cols-1 gap-6">
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 block mb-2">感悟内容</label>
+                    <textarea id="insight-content" rows="4" required class="w-full bg-white/60 border border-slate-200/50 rounded-2xl px-5 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500"></textarea>
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 block mb-2">作者 / 署名</label>
+                    <input id="insight-author" class="w-full bg-white/60 border border-slate-200/50 rounded-2xl px-5 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 block mb-2">来源 / 出处</label>
+                    <input id="insight-source" class="w-full bg-white/60 border border-slate-200/50 rounded-2xl px-5 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 block mb-2">排序</label>
+                    <input id="insight-sort" type="number" value="0" class="w-full bg-white/60 border border-slate-200/50 rounded-2xl px-5 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500">
+                </div>
+            </div>
+            <div class="pt-4">
+                <button type="submit" class="w-full py-4 bg-indigo-600 text-white rounded-2xl font-black text-sm hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-600/20 active:scale-[0.98]">
+                    确认保存感悟
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 轮播图管理 Modal -->
+<div id="carousel-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-50 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
+    <div class="glass-panel p-10 rounded-[40px] max-w-lg w-full mx-4 relative transform scale-95 transition-all duration-300 border border-white">
+        <button onclick="closeCarouselModal()" class="absolute top-8 right-8 w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition-all active:scale-95">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <h3 id="carousel-modal-title" class="text-xl font-black text-slate-800 mb-8">轮播图配置</h3>
+        <form id="carousel-form" class="space-y-6">
+            <input type="hidden" id="carousel-id">
+            <div class="grid grid-cols-1 gap-6">
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 block mb-2">轮播标题 / 描述</label>
+                    <input id="carousel-title" required class="w-full bg-white/60 border border-slate-200/50 rounded-2xl px-5 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 block mb-2">排序</label>
+                    <input id="carousel-sort" type="number" value="0" class="w-full bg-white/60 border border-slate-200/50 rounded-2xl px-5 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 block mb-2">图片文件上传</label>
+                    <div class="flex items-center gap-4 mb-3">
+                        <div id="carousel-preview" class="w-24 h-24 rounded-2xl bg-slate-100 border-2 border-dashed border-slate-200 flex items-center justify-center overflow-hidden shrink-0">
+                            <i class="fa-solid fa-image text-slate-300 text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <input type="file" id="carousel-file" accept="image/*" class="text-[10px] block w-full mb-2">
+                            <p class="text-[9px] text-slate-400 italic">建议尺寸: 1920x1080px (或 16:9 比例)</p>
+                        </div>
+                    </div>
+                    <input type="hidden" id="carousel-url">
+                </div>
+            </div>
+            <div class="pt-4">
+                <button type="submit" class="w-full py-4 bg-indigo-600 text-white rounded-2xl font-black text-sm hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-600/20 active:scale-[0.98]">
+                    确认保存轮播图
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 通用本地条目管理 Modal (Books/Habits) -->
+<div id="generic-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-50 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
+    <div class="glass-panel p-10 rounded-[40px] max-w-xl w-full mx-4 relative transform scale-95 transition-all duration-300 border border-white shadow-2xl">
+        <button onclick="closeGenericModal()" class="absolute top-8 right-8 w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition-all active:scale-95">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <h3 id="gen-modal-title" class="text-xl font-black text-slate-800 mb-8">条目管理</h3>
+        <form id="generic-form" class="space-y-6">
+            <input type="hidden" id="gen-type">
+            <input type="hidden" id="gen-id">
+            <div id="gen-fields" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- 由 JS 动态插入 -->
+            </div>
+            <div class="pt-6">
+                <button type="submit" class="w-full py-4 bg-indigo-600 text-white rounded-2xl font-black text-sm hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-600/20 active:scale-[0.98]">
+                    确认保存本地条目
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 通用确认/提醒弹窗 -->
+<div id="vision-popup" class="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-[100] flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
+    <div class="glass-panel p-10 rounded-[40px] max-w-sm w-full mx-4 text-center transform scale-95 transition-all duration-300 border border-white shadow-2xl">
+        <div id="popup-icon" class="w-16 h-16 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl mb-6 mx-auto">
+            <i class="fa-solid fa-circle-question"></i>
+        </div>
+        <h3 id="popup-title" class="text-xl font-black text-slate-800 mb-3">确认操作</h3>
+        <p id="popup-msg" class="text-xs text-slate-500 font-bold leading-relaxed mb-8">您确定要执行此操作吗？此动作可能无法撤回。</p>
+        <div class="flex gap-4">
+            <button id="popup-cancel-btn" onclick="closeVisionPopup()" class="flex-1 py-4 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-2xl font-black text-sm transition-all active:scale-95">
+                取消
+            </button>
+            <button id="popup-confirm-btn" class="flex-1 py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-black text-sm transition-all active:scale-95 shadow-lg shadow-slate-900/10">
+                确定
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="toastNotification" class="fixed bottom-6 right-6 px-6 py-4 rounded-2xl text-white font-bold shadow-2xl transition-all duration-500 translate-y-20 opacity-0 z-[2000]"></div>
+
+<!-- JS 脚本 -->
+<script src="/js/dashboard.js"></script>
+
+</body>
+</html>

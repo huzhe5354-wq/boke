@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>项目详情</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+
+<body>
+
+<div id="project-detail"></div>
+
+<script type="module">
+    const API = "http://localhost:8080";
+
+    const params = new URLSearchParams(location.search);
+    const id = params.get("id");
+
+    async function loadDetail() {
+        const res = await fetch(`${API}/project/${id}`);
+        const data = await res.json();
+
+        render(data);
+    }
+
+    function render(p) {
+        document.getElementById("project-detail").innerHTML = `
+        <div class="detail-container">
+            <h1>${p.title}</h1>
+
+            <img src="${p.image}" style="max-width:100%;border-radius:12px;" />
+
+            <p>${p.description || ''}</p>
+
+            <div>
+                <strong>技术栈：</strong> ${p.techStack || ''}
+            </div>
+
+            <div style="margin-top:20px;">
+                <a href="${p.github}" target="_blank">GitHub</a>
+                |
+                <a href="${p.demo}" target="_blank">Demo</a>
+            </div>
+        </div>
+    `;
+    }
+
+    loadDetail();
+</script>
+
+</body>
+</html>

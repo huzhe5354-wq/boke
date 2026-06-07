@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>项目管理后台</title>
+    <link rel="stylesheet" href="../css/main.css">
+
+    <style>
+        .container {
+            width: 900px;
+            margin: 40px auto;
+        }
+
+        .card {
+            background: #fff;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        button {
+            margin-right: 8px;
+        }
+
+        /* 弹窗 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background: #fff;
+            width: 400px;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        input {
+            width: 100%;
+            margin: 6px 0;
+            padding: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>项目管理后台</h2>
+
+    <button id="addBtn">+ 新增项目</button>
+
+    <div id="list"></div>
+
+</div>
+
+<!-- 弹窗 -->
+<div id="modal" class="modal">
+    <div class="modal-content">
+
+        <h3 id="modalTitle">新增项目</h3>
+
+        <input id="title" placeholder="项目名称">
+        <input id="description" placeholder="项目描述">
+        <input id="techStack" placeholder="技术栈">
+        <input id="github" placeholder="GitHub">
+        <input id="demo" placeholder="Demo">
+
+        <input type="file" id="imageFile">
+
+        <button onclick="saveProject()">保存</button>
+        <button onclick="closeModal()">关闭</button>
+
+    </div>
+</div>
+
+
+<script type="module" src="../js/project.js"></script>
+
+</body>
+</html>
