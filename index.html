@@ -6,335 +6,155 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HZ | Apple Vision Pro Portfolio</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        appleGray: '#f5f5f7',
-                        glassBg: 'rgba(255, 255, 255, 0.45)',
-                        glassBorder: 'rgba(255, 255, 255, 0.6)',
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- CSS 库 -->
+    <script src="/js/tailwind.js"></script>
+    <!-- 动画与图标样式库 -->
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
-
-        * { box-sizing: border-box; }
-
-        body {
-            font-family: 'Plus Jakarta Sans', 'Noto Sans SC', -apple-system, sans-serif;
-            background-color: #f0f2f5;
-            color: #1e293b;
-            overflow-x: hidden;
-            scroll-behavior: smooth;
-        }
-
-        /* 隐藏滚动条（融合自代码1） */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.55); border-radius: 999px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(100, 116, 139, 0.7); }
-
-        /* Apple Vision Pro 风格液态高透玻璃面板 */
-        .vision-glass {
-            position: relative;
-            isolation: isolate;
-            overflow: hidden;
-            background:
-                    radial-gradient(1200px 600px at 10% 0%, rgba(59, 130, 246, 0.10), rgba(255, 255, 255, 0) 60%),
-                    radial-gradient(900px 520px at 100% 20%, rgba(99, 102, 241, 0.08), rgba(255, 255, 255, 0) 55%),
-                    rgba(255, 255, 255, 0.38);
-            backdrop-filter: blur(40px) saturate(210%);
-            -webkit-backdrop-filter: blur(40px) saturate(210%);
-            border: 1px solid rgba(255, 255, 255, 0.55);
-            box-shadow: 0 20px 50px rgba(31, 38, 135, 0.04);
-        }
-        .vision-glass::before{
-            content:"";
-            position:absolute;
-            inset:-2px;
-            background:
-                    linear-gradient(135deg, rgba(255,255,255,0.85), rgba(255,255,255,0) 38%),
-                    radial-gradient(600px 220px at 30% 10%, rgba(255,255,255,0.65), rgba(255,255,255,0) 60%);
-            opacity: 0.32;
-            pointer-events:none;
-            mix-blend-mode: overlay;
-            z-index: 0;
-        }
-        .vision-glass > * { position: relative; z-index: 1; }
-
-        /* Dock 导航高亮态（匹配截图：红色强调） */
-        .dock-link {
-            position: relative;
-            border: 1px solid transparent;
-        }
-        .dock-link.active {
-            color: rgb(220, 38, 38); /* red-600 */
-            background: rgba(255, 255, 255, 0.52);
-            border-color: rgba(255, 255, 255, 0.75);
-            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
-        }
-        .dock-link.active i { color: rgba(30, 41, 59, 0.75); }
-        .dock-link .dock-indicator{
-            position:absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 6px;
-            height: 6px;
-            border-radius: 999px;
-            background: rgba(220, 38, 38, 0);
-            transition: background .25s ease, transform .25s ease;
-        }
-        .dock-link.active .dock-indicator{
-            background: rgba(220, 38, 38, 0.9);
-            transform: translateY(-50%) scale(1.1);
-        }
-
-        /* 头像逃离系统（融合自代码1） */
-        .evade-avatar{
-            --evade-x: 0px;
-            --evade-y: 0px;
-            --evade-scale: 1;
-            transform: translate3d(var(--evade-x), var(--evade-y), 0) scale(var(--evade-scale));
-            transition: filter .25s ease, box-shadow .25s ease;
-            will-change: transform;
-        }
-        #avatar-badge:hover .evade-avatar{ --evade-scale: 1.05; }
-
-        /* 极简玻璃悬停微动 */
-        .glass-hover-active {
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .glass-hover-active:hover {
-            background: rgba(255, 255, 255, 0.6);
-            border-color: rgba(255, 255, 255, 0.85);
-            transform: translateY(-4px);
-            box-shadow: 0 30px 60px rgba(31, 38, 135, 0.08);
-        }
-
-        /* ==========================================
-           代码1特效融合：漂浮“气泡”背景 + 鼠标光晕
-           ========================================== */
-        .dynamic-blob,
-        .fluid-blob {
-            position: absolute;
-            border-radius: 999px;
-            filter: blur(80px);
-            pointer-events: none;
-            opacity: 0.65;
-            z-index: 0;
-            mix-blend-mode: multiply;
-            animation: floatAround 16s infinite ease-in-out;
-        }
-        .fluid-blob { opacity: 0.55; filter: blur(90px); }
-
-        @keyframes floatAround {
-            0%, 100% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-30px) scale(1.15); }
-        }
-
-        #cursor-glow {
-            position: fixed;
-            width: 420px;
-            height: 420px;
-            border-radius: 999px;
-            pointer-events: none;
-            background: radial-gradient(circle, rgba(59, 130, 246, 0.10) 0%, rgba(255, 255, 255, 0) 68%);
-            transform: translate(-50%, -50%);
-            z-index: 15;
-            transition: width 0.2s, height 0.2s, opacity 0.25s;
-            opacity: 0.9;
-        }
-
-        /* 3D 轴向透图书架 (代码1更真实的“封面/书脊/内页”结构) */
-        .bookshelf-scene,
-        .bookshelf-perspective {
-            perspective: 1000px;
-        }
-
-        .book3d-wrapper {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .book-container:hover .book3d-wrapper {
-            transform: rotateY(-28deg) rotateX(6deg) translateZ(6px);
-        }
-        .book3d-cover {
-            position: absolute;
-            inset: 0;
-            border-radius: 10px 16px 16px 10px;
-            transform: translateZ(12px);
-            box-shadow: inset 6px 0 14px rgba(0, 0, 0, 0.16), 0 14px 26px rgba(15, 23, 42, 0.16);
-            overflow: hidden;
-        }
-        .book3d-spine {
-            position: absolute;
-            top: 0;
-            left: -10px;
-            width: 20px;
-            height: 100%;
-            transform: rotateY(-90deg);
-            transform-origin: right center;
-            border-radius: 10px 0 0 10px;
-            box-shadow: inset -6px 0 14px rgba(0, 0, 0, 0.28);
-        }
-        .book3d-pages {
-            position: absolute;
-            top: 3px;
-            left: 5px;
-            width: calc(100% - 10px);
-            height: calc(100% - 6px);
-            background: linear-gradient(90deg, rgba(255,255,255,0.92), rgba(241,245,249,0.92));
-            border: 1px solid rgba(148, 163, 184, 0.25);
-            border-radius: 8px 14px 14px 8px;
-            transform: translateZ(0px);
-            box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
-        }
-        .book3d-shine {
-            position: absolute;
-            inset: -40% -20%;
-            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.55), rgba(255,255,255,0));
-            transform: rotate(18deg);
-            opacity: 0.35;
-            mix-blend-mode: overlay;
-        }
-
-        /* 图片轮播淡入淡出 */
-        .carousel-view {
-            transition: opacity 1s ease-in-out;
-        }
-
-        /* 电影海报卡片（液态玻璃 + 海报阴影） */
-        .movie-card{
-            position: relative;
-            overflow: hidden;
-            border-radius: 24px;
-        }
-        .movie-card::before{
-            content:"";
-            position:absolute;
-            inset:0;
-            background: linear-gradient(to top, rgba(2, 6, 23, 0.78), rgba(2, 6, 23, 0.10) 55%, rgba(255,255,255,0));
-            z-index: 1;
-        }
-        .movie-card .poster{
-            position:absolute;
-            inset:0;
-            background-size: cover;
-            background-position: center;
-            transform: scale(1.02);
-            transition: transform .6s cubic-bezier(0.16,1,0.3,1), filter .6s cubic-bezier(0.16,1,0.3,1);
-            filter: saturate(1.02) contrast(1.02);
-        }
-        .movie-card:hover .poster{ transform: scale(1.08); filter: saturate(1.08) contrast(1.06); }
-        .movie-card .meta{ position: relative; z-index: 2; }
-
-        /* 自适应左侧布局 */
-        @media (min-width: 1024px) {
-            .app-container {
-                margin-left: 280px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="/css/home.css">
 </head>
 <body class="min-h-screen relative overflow-x-hidden text-slate-800">
 
-<!-- Three.js 星云连线背景层 -->
+<!-- Three.js 拓扑空间粒子背景 -->
 <div id="three-container" class="fixed inset-0 z-0 pointer-events-none"></div>
 
-<!-- 代码1特效融合：鼠标光晕 -->
-<div id="cursor-glow" aria-hidden="true"></div>
-
-<!-- 代码1特效融合：全局漂浮气泡（不改变代码3排版，仅作为底层氛围） -->
+<!-- 底层流光 Blob -->
 <div class="dynamic-blob w-[520px] h-[520px] bg-blue-200 top-24 left-[8%]" style="z-index:0;"></div>
 <div class="dynamic-blob w-[520px] h-[520px] bg-indigo-200 top-[60%] right-[6%]" style="animation-delay:-4s; z-index:0;"></div>
 
-<!-- 1. 左侧高端悬浮式 Dock 导航栏 (白灰高透，固定不闪避) -->
-<nav class="fixed bottom-4 left-4 right-4 lg:bottom-auto lg:top-8 lg:left-8 lg:w-64 lg:h-[calc(100vh-64px)] z-40 vision-glass rounded-[32px] p-6 flex lg:flex-col justify-between items-center lg:items-start shadow-xl">
-    <div class="flex items-center space-x-3 lg:mb-12">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center font-bold text-lg text-white shadow-md shadow-blue-500/10">
+<!-- 1. 左侧高端悬浮式 Dock 导航栏 -->
+<nav class="fixed bottom-4 left-4 right-4 lg:bottom-auto lg:top-8 lg:left-8 lg:w-64 lg:h-[calc(100vh-64px)] z-40 bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[32px] p-5 flex lg:flex-col justify-between items-center lg:items-start shadow-lg">
+    <div class="flex items-center space-x-3 lg:mb-6">
+        <div id="site-logo" class="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center font-bold text-xl text-white shadow-lg shadow-blue-500/20 overflow-hidden">
             HZ
         </div>
         <div class="hidden lg:block">
-            <h2 class="font-bold text-sm text-slate-800">胡哲</h2>
-            <p class="text-[10px] text-slate-500">Developer Portfolio</p>
+            <h2 id="site-name" class="font-black text-sm text-slate-800 tracking-tight">胡哲</h2>
+            <p id="site-bio" class="text-[9px] text-slate-500 font-bold uppercase truncate max-w-[120px]">Developer Portfolio</p>
         </div>
     </div>
 
-    <!-- 菜单（按截图结构；不足项已补齐） -->
-    <ul class="flex lg:flex-col justify-around w-full lg:space-y-3 text-xs font-semibold text-slate-600">
+    <!-- 菜单分卷 -->
+    <ul class="flex lg:flex-col justify-around w-full lg:space-y-1.5 text-xs font-semibold text-slate-600">
         <li>
-            <a data-nav href="#home" class="dock-link active flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-white/40 hover:text-slate-900 transition-all">
+            <a data-nav href="#home" class="dock-link active flex items-center space-x-3 px-4 py-2.5 rounded-xl hover:bg-white/40 hover:text-slate-900 transition-all">
                 <span class="dock-indicator"></span>
                 <i class="fa-solid fa-house w-4 text-slate-500"></i>
                 <span class="hidden lg:inline">首页</span>
             </a>
         </li>
         <li>
-            <a data-nav href="#dashboard" class="dock-link flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-white/40 hover:text-slate-900 transition-all">
+            <a data-nav href="#dashboard" class="dock-link flex items-center space-x-3 px-4 py-2.5 rounded-xl hover:bg-white/40 hover:text-slate-900 transition-all">
                 <span class="dock-indicator"></span>
                 <i class="fa-solid fa-user w-4 text-slate-500"></i>
                 <span class="hidden lg:inline">关于我</span>
             </a>
         </li>
         <li>
-            <a data-nav href="#projects" class="dock-link flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-white/40 hover:text-slate-900 transition-all">
+            <a data-nav href="#projects" class="dock-link flex items-center space-x-3 px-4 py-2.5 rounded-xl hover:bg-white/40 hover:text-slate-900 transition-all">
                 <span class="dock-indicator"></span>
                 <i class="fa-solid fa-cubes w-4 text-slate-500"></i>
                 <span class="hidden lg:inline">项目展示</span>
             </a>
         </li>
         <li>
-            <a data-nav href="#books" class="dock-link flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-white/40 hover:text-slate-900 transition-all">
+            <a data-nav href="#books" class="dock-link flex items-center space-x-3 px-4 py-2.5 rounded-xl hover:bg-white/40 hover:text-slate-900 transition-all">
                 <span class="dock-indicator"></span>
                 <i class="fa-solid fa-book w-4 text-slate-500"></i>
                 <span class="hidden lg:inline">推荐书籍</span>
             </a>
         </li>
         <li>
-            <a data-nav href="#movies" class="dock-link flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-white/40 hover:text-slate-900 transition-all">
-                <span class="dock-indicator"></span>
-                <i class="fa-solid fa-heart w-4 text-slate-500"></i>
-                <span class="hidden lg:inline">灵感与最爱</span>
-            </a>
-        </li>
-        <li>
-            <a data-nav href="#health" class="dock-link flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-white/40 hover:text-slate-900 transition-all">
+            <a data-nav href="#health" class="dock-link flex items-center space-x-3 px-4 py-2.5 rounded-xl hover:bg-white/40 hover:text-slate-900 transition-all">
                 <span class="dock-indicator"></span>
                 <i class="fa-solid fa-heart-pulse w-4 text-slate-500"></i>
                 <span class="hidden lg:inline">健康心得</span>
             </a>
         </li>
         <li>
-            <a data-nav href="#insights" class="dock-link flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-white/40 hover:text-slate-900 transition-all">
+            <a data-nav href="#insights" class="dock-link flex items-center space-x-3 px-4 py-2.5 rounded-xl hover:bg-white/40 hover:text-slate-900 transition-all">
                 <span class="dock-indicator"></span>
                 <i class="fa-solid fa-lightbulb w-4 text-slate-500"></i>
                 <span class="hidden lg:inline">感悟</span>
             </a>
         </li>
         <li>
-            <a data-nav href="#contact" class="dock-link flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-white/40 hover:text-slate-900 transition-all">
+            <a data-nav href="#contact" class="dock-link flex items-center space-x-3 px-4 py-2.5 rounded-xl hover:bg-white/40 hover:text-slate-900 transition-all">
                 <span class="dock-indicator"></span>
                 <i class="fa-solid fa-paper-plane w-4 text-slate-500"></i>
-                <span class="hidden lg:inline">Contact me</span>
+                <span class="hidden lg:inline">联系留言</span>
+            </a>
+        </li>
+        <li>
+            <a href="/dashboard.html" class="dock-link flex items-center space-x-3 px-4 py-2.5 rounded-xl hover:bg-white/40 hover:text-slate-900 transition-all">
+                <span class="dock-indicator"></span>
+                <i class="fa-solid fa-sliders w-4 text-slate-500"></i>
+                <span class="hidden lg:inline">后台管理</span>
             </a>
         </li>
     </ul>
 
-    <!-- 指示灯 -->
-    <div class="hidden lg:flex items-center space-x-2 text-[10px] text-slate-500 mt-auto pt-4 border-t border-slate-200/40 w-full">
-        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-        <span>连接本地 SpringBoot</span>
+    <!-- 拟态高保真背景音乐播放器 (全面升级版) -->
+    <div class="vision-glass p-6 rounded-[32px] shadow-2xl relative overflow-hidden group/player mb-6 border border-white/40 hidden lg:block w-full mt-6">
+        <div class="flex items-center gap-5 mb-6">
+            <!-- 封面图展示 -->
+            <div class="w-16 h-16 rounded-2xl overflow-hidden shadow-lg border border-white/60 relative group-hover/player:scale-105 transition-all duration-500">
+                <img id="track-cover" src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=200" class="w-full h-full object-cover">
+                <div id="cover-spin" class="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover/player:opacity-100 transition-opacity">
+                    <i class="fa-solid fa-compact-disc text-white/80 animate-spin-slow"></i>
+                </div>
+            </div>
+
+            <div class="flex-1 min-w-0">
+                <span class="text-[9px] font-black uppercase text-rose-500 tracking-[0.2em] mb-1 flex items-center gap-2">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+                    </span>
+                    Spatial Audio
+                </span>
+                <span id="track-name" class="text-xs text-slate-700 font-black truncate max-w-[120px]">Music Loading...</span>
+            </div>
+            <div class="flex gap-0.5 items-end h-4" id="audio-wave">
+                <span class="w-0.5 bg-rose-500/60 rounded-full transition-all duration-300" style="height: 20%"></span>
+                <span class="w-0.5 bg-rose-500/80 rounded-full transition-all duration-300" style="height: 40%"></span>
+                <span class="w-0.5 bg-rose-500 rounded-full transition-all duration-300" style="height: 60%"></span>
+                <span class="w-0.5 bg-rose-500/80 rounded-full transition-all duration-300" style="height: 40%"></span>
+                <span class="w-0.5 bg-rose-500/60 rounded-full transition-all duration-300" style="height: 20%"></span>
+            </div>
+        </div>
+
+        <!-- 进度条系统 -->
+        <div class="mb-4">
+            <div class="relative w-full h-1.5 bg-slate-200/30 rounded-full overflow-hidden cursor-pointer group/progress" id="progress-container" onclick="seekAudio(event)">
+                <div id="progress-bar" class="absolute top-0 left-0 h-full bg-gradient-to-r from-rose-400 to-rose-600 w-0 transition-all duration-100"></div>
+            </div>
+            <div class="flex justify-between mt-1.5 px-0.5">
+                <span id="current-time" class="text-[9px] text-slate-400 font-bold">0:00</span>
+                <span id="total-duration" class="text-[9px] text-slate-400 font-bold">0:00</span>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <button onclick="prevTrack()" class="text-slate-400 hover:text-rose-500 transition-all active:scale-90"><i class="fa-solid fa-backward-step text-sm"></i></button>
+                <button id="play-btn" onclick="togglePlay()" class="w-12 h-12 bg-white/60 hover:bg-white border border-slate-200/50 rounded-2xl flex items-center justify-center text-slate-800 shadow-lg shadow-rose-500/5 transition-all hover:shadow-rose-500/10 active:scale-95 group-active/player:scale-95">
+                    <i class="fa-solid fa-play text-sm ml-0.5"></i>
+                </button>
+                <button onclick="nextTrack()" class="text-slate-400 hover:text-rose-500 transition-all active:scale-90"><i class="fa-solid fa-forward-step text-sm"></i></button>
+            </div>
+            
+            <!-- 音量控制 (垂直展开式或滑块) -->
+            <div class="flex items-center gap-2 flex-1 max-w-[80px]">
+                <i class="fa-solid fa-volume-low text-[10px] text-slate-400"></i>
+                <input type="range" min="0" max="1" step="0.01" value="0.5" id="volume-slider" oninput="setVolume(this.value)" class="w-full h-1 accent-rose-500 rounded-lg cursor-pointer bg-slate-200/50 appearance-none hover:accent-rose-600 transition-all">
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部连接状态 -->
+    <div id="service-status-badge" class="hidden lg:flex items-center space-x-2 text-[10px] text-slate-500 mt-auto pt-4 border-t border-slate-200/40 w-full">
+        <span class="w-2 h-2 rounded-full bg-slate-400" id="status-dot"></span>
+        <span id="status-text">检测服务器中...</span>
     </div>
 </nav>
 
@@ -343,218 +163,114 @@
 
     <!-- 2. HOME HERO SECTION -->
     <section id="home" class="min-h-[85vh] flex flex-col justify-center items-center text-center">
-        <!-- 3D 浮动头像卡片 (头像实时3D跟随，不逃逸鼠标，保证可用性) -->
+        <!-- 3D 头像悬离感应面板 -->
         <div id="avatar-badge" class="vision-glass p-8 lg:p-12 rounded-[40px] max-w-xl shadow-xl relative overflow-hidden group select-none">
             <div class="absolute -inset-1 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-[40px] blur-2xl opacity-10 group-hover:opacity-20 transition-opacity"></div>
 
             <div class="relative z-10 flex flex-col items-center">
-                <!-- 头像区域 (保留 HZ 的核心 3D 反射动态) -->
-                <div id="evade-avatar" class="evade-avatar w-24 h-24 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center font-black text-4xl text-white shadow-lg shadow-indigo-500/10 mb-6 border border-white/40">
+                <!-- 头像区域：进一步增大尺寸 -->
+                <div id="evade-avatar" class="evade-avatar w-48 h-48 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center font-black text-6xl text-white shadow-2xl shadow-indigo-500/30 mb-10 border-4 border-white/60 overflow-hidden">
                     HZ
                 </div>
                 <h1 class="text-3xl lg:text-4xl font-black text-slate-800 tracking-tight mb-2">
-                    你好，我是 <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">胡哲</span>
+                    <span id="hero-greeting">你好，我是</span> <span id="hero-name" class="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">胡哲</span>
                 </h1>
 
-                <!-- Typed 打字机文字 -->
+                <!-- 打字机 -->
                 <p class="text-lg text-slate-600 font-semibold mb-6">
-                    我是一名 <span id="typed" class="text-blue-600 border-b border-blue-600/30 pb-0.5"></span>
+                    <span id="typewriter-prefix">我是一名</span> <span id="typed" class="text-blue-600 border-b border-blue-600/30 pb-0.5"></span>
                 </p>
 
                 <p class="text-slate-500 text-xs max-w-sm mb-8 leading-relaxed">
-                    精通 SpringBoot + Redis 高吞吐后端系统研发，擅长微服务拦截器设计与高雅拟物化白灰磨砂前端视觉传达。
+                    精通 SpringBoot + Redis 高吞吐后端系统研发，擅长微服务拦截器 design 与拟物化磨砂前端视觉传达。
                 </p>
 
-                <!-- 页面跳转 -->
                 <div class="flex space-x-4">
                     <a href="#projects" class="px-6 py-3 bg-slate-900 text-white rounded-full font-bold text-xs hover:bg-slate-800 active:scale-95 transition-all shadow-md">
                         查看项目作品
                     </a>
-                    <a href="#contact" class="px-6 py-3 border border-slate-300 bg-white/40 hover:bg-white/80 rounded-full font-bold text-xs transition-all text-slate-700 active:scale-95">
-                        联系我
-                    </a>
+                    <a href="#contact" class="px-6 py-3 border border-slate-300 bg-white/10 hover:bg-white/30 rounded-full font-bold text-xs transition-all text-slate-700 active:scale-95">
+                联系我
+            </a>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- 3. FOUR-QUADRANT DASHBOARD (按手绘排班高规格呈现) -->
-    <section id="dashboard" class="py-16 max-w-5xl mx-auto">
+    <!-- 3. FOUR-QUADRANT DASHBOARD -->
+    <section id="dashboard" class="py-16 max-w-6xl mx-auto px-4">
         <h2 class="text-2xl font-black mb-10 flex items-center space-x-3 text-slate-800">
             <i class="fa-solid fa-chart-pie text-indigo-500 text-xl"></i>
             <span>关于我与数据看板 / Portfolio Dashboard</span>
         </h2>
 
-        <!-- 网格排班 -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Time Timeline 成长曲线 (左上象限) -->
-            <div class="lg:col-span-2 vision-glass p-6 rounded-3xl" data-aos="fade-up">
-                <div class="flex justify-between items-center mb-6">
+        <!-- 顶层大幅轮播图 -->
+        <div class="vision-glass p-8 rounded-[40px] mb-10" data-aos="fade-up">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="font-bold text-sm flex items-center space-x-2 text-slate-700">
+                    <i class="fa-solid fa-images text-emerald-500"></i>
+                    <span>Space Location / 印象流转</span>
+                </h3>
+                <span class="text-[10px] bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full font-black uppercase tracking-widest">Life Moments</span>
+            </div>
+            <div id="carousel-container" class="h-[450px] rounded-[32px] relative overflow-hidden border border-slate-200 shadow-2xl bg-slate-100 flex items-center justify-center group">
+                <!-- 动态加载轮播图 -->
+                <div class="animate-pulse text-xs text-slate-400 font-bold">正在同步胡哲的生活美学切面...</div>
+            </div>
+        </div>
+
+        <!-- 中层图表排布 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- 1. 成长维度演化 (Line Chart) -->
+            <div class="vision-glass p-10 rounded-[40px]" data-aos="fade-up">
+                <div class="flex justify-between items-center mb-8">
                     <h3 class="font-bold text-sm flex items-center space-x-2 text-slate-700">
-                        <i class="fa-solid fa-chart-line text-blue-500"></i>
-                        <span>Time Timeline</span>
+                        <i class="fa-solid fa-chart-line text-indigo-500"></i>
+                        <span>成长维度演化 / Growth Evolution</span>
                     </h3>
-                    <span class="text-[10px] bg-slate-200/50 px-2.5 py-1 rounded-full text-slate-600 font-bold">10-19岁数据模型</span>
                 </div>
-                <!-- 曲线容器 -->
-                <div class="h-60 relative">
-                    <canvas id="timelineChart"></canvas>
-                </div>
-                <p class="text-[11px] text-slate-500 mt-4 leading-relaxed">
-                    精准呈现了胡哲在 10 岁至 19 岁跨度中，对于<strong>阅读内容</strong>、<strong>健身内容（自15岁起大爆发）</strong>、<strong>音乐</strong>以及<strong>远处景色（自然行迹）</strong>的探索平衡。
-                </p>
-            </div>
-
-            <!-- Space Location 图片循环轮播展示 (右上象限 - 彻底无地标) -->
-            <div class="vision-glass p-6 rounded-3xl flex flex-col justify-between" data-aos="fade-up" style="animation-delay: 0.1s;">
-                <div>
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-bold text-sm flex items-center space-x-2 text-slate-700">
-                            <i class="fa-solid fa-images text-emerald-500"></i>
-                            <span>Space Location / 印象流转</span>
-                        </h3>
-                    </div>
-
-                    <!-- 无地标轮播展示 -->
-                    <div class="h-44 rounded-2xl relative overflow-hidden border border-slate-200 shadow-inner bg-slate-100 flex items-center justify-center">
-                        <img id="carousel-img-1" src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=500&q=80" alt="Seaside" class="carousel-view absolute inset-0 w-full h-full object-cover opacity-100">
-                        <img id="carousel-img-2" src="https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?auto=format&fit=crop&w=500&q=80" alt="Trail" class="carousel-view absolute inset-0 w-full h-full object-cover opacity-0">
-                        <img id="carousel-img-3" src="https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=500&q=80" alt="Insight" class="carousel-view absolute inset-0 w-full h-full object-cover opacity-0">
-                        <img id="carousel-img-4" src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=500&q=80" alt="Mountain" class="carousel-view absolute inset-0 w-full h-full object-cover opacity-0">
-                        <img id="carousel-img-5" src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=500&q=80" alt="Horizon" class="carousel-view absolute inset-0 w-full h-full object-cover opacity-0">
-                        <img id="carousel-img-6" src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=500&q=80" alt="Forest" class="carousel-view absolute inset-0 w-full h-full object-cover opacity-0">
-
-                        <!-- 状态条 -->
-                        <div class="absolute bottom-0 inset-x-0 bg-white/75 backdrop-blur-sm py-2 px-3 text-[10px] text-slate-700 font-bold flex justify-between items-center border-t border-slate-200/50">
-                            <span id="carousel-label">生活记录：远处海边景色</span>
-                            <div class="flex space-x-1">
-                                <span class="w-1.5 h-1.5 rounded-full bg-slate-400" id="dot-0"></span>
-                                <span class="w-1.5 h-1.5 rounded-full bg-slate-200" id="dot-1"></span>
-                                <span class="w-1.5 h-1.5 rounded-full bg-slate-200" id="dot-2"></span>
-                                <span class="w-1.5 h-1.5 rounded-full bg-slate-200" id="dot-3"></span>
-                                <span class="w-1.5 h-1.5 rounded-full bg-slate-200" id="dot-4"></span>
-                                <span class="w-1.5 h-1.5 rounded-full bg-slate-200" id="dot-5"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <p class="text-[11px] text-slate-500 leading-relaxed mt-4">
-                    “摒弃刻板地图锚针。基于纯净的实景相册流转，诠释胡哲的生活美学切面。”
-                </p>
-            </div>
-        </div>
-
-        <!-- 学科雷达、音乐环形、健身看板 -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
-            <!-- 1. 学科深度雷达图 (左下象限) -->
-            <div class="vision-glass p-6 rounded-3xl" data-aos="fade-up">
-                <h3 class="font-bold text-xs mb-4 flex items-center space-x-2 text-slate-600">
-                    <i class="fa-solid fa-graduation-cap text-indigo-500"></i>
-                    <span>人文社科深度 / Discipline Depth</span>
-                </h3>
-                <div class="h-44 relative flex items-center justify-center">
-                    <canvas id="movieChart"></canvas>
+                <div class="h-72 relative">
+                    <canvas id="growthChart"></canvas>
                 </div>
             </div>
 
-            <!-- 2. 音乐欣赏环形图 (中下象限) -->
-            <div class="vision-glass p-6 rounded-3xl" data-aos="fade-up" style="animation-delay: 0.1s;">
-                <h3 class="font-bold text-xs mb-4 flex items-center space-x-2 text-slate-600">
-                    <i class="fa-solid fa-compact-disc text-blue-500"></i>
-                    <span>音乐风格倾向 / Music Genres</span>
-                </h3>
-                <div class="h-44 relative flex items-center justify-center">
-                    <canvas id="albumChart"></canvas>
-                </div>
-            </div>
-
-            <!-- 3. 15-19岁健身成长看板 (右下象限) -->
-            <div class="vision-glass p-6 rounded-3xl flex flex-col justify-between" data-aos="fade-up" style="animation-delay: 0.2s;">
-                <div>
-                    <h3 class="font-bold text-xs mb-4 flex items-center space-x-2 text-slate-600">
-                        <i class="fa-solid fa-dumbbell text-rose-500"></i>
-                        <span>健身成长数据追踪 (15-19岁)</span>
+            <!-- 2. 书籍学科 (Radar Chart) -->
+            <div class="vision-glass p-10 rounded-[40px]" data-aos="fade-up" style="animation-delay: 0.1s;">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 class="font-bold text-sm flex items-center space-x-2 text-slate-700">
+                        <i class="fa-solid fa-book text-emerald-500"></i>
+                        <span>书籍学科分布 / Book Disciplines</span>
                     </h3>
-                    <div class="space-y-3">
-                        <div class="bg-white/40 border border-slate-200/50 px-4 py-2.5 rounded-xl shadow-sm flex justify-between items-center">
-                            <span class="text-[10px] text-slate-500 font-bold">体脂调优</span>
-                            <span class="text-sm font-black text-slate-800">11.2 %</span>
-                        </div>
-                        <div class="bg-white/40 border border-slate-200/50 px-4 py-2.5 rounded-xl shadow-sm flex justify-between items-center">
-                            <span class="text-[10px] text-slate-500 font-bold">行走步数</span>
-                            <span class="text-sm font-black text-slate-800">15k+ Steps</span>
-                        </div>
-                        <div class="bg-white/40 border border-slate-200/50 px-4 py-2.5 rounded-xl shadow-sm flex justify-between items-center">
-                            <span class="text-[10px] text-slate-500 font-bold">体能级别</span>
-                            <span class="text-sm font-black text-slate-800">高爆发突破</span>
-                        </div>
-                    </div>
                 </div>
-                <p class="text-[11px] text-slate-500 leading-relaxed mt-4">
-                    通过精益的自律运动，塑造支撑数万行代码稳定流转的健康体魄。
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <!-- 4. SKILLS SECTION -->
-    <section id="skills" class="py-16 max-w-5xl mx-auto">
-        <h2 class="text-2xl font-black mb-10 flex items-center space-x-3 text-slate-800">
-            <i class="fa-solid fa-brain text-emerald-500 text-xl"></i>
-            <span>技术栈谱 / Skill Matrix</span>
-        </h2>
-
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <!-- 技能 1 -->
-            <div class="vision-glass p-5 rounded-2xl glass-hover-active" data-aos="zoom-in">
-                <div class="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/15 flex items-center justify-center text-orange-600 text-lg mb-4">
-                    <i class="fa-brands fa-java"></i>
+                <div class="h-72 relative flex items-center justify-center">
+                    <canvas id="bookChart"></canvas>
                 </div>
-                <h3 class="font-bold text-sm mb-1 text-slate-800">Java Core</h3>
-                <p class="text-[10px] text-slate-500 mb-3">高并发集合栈、JVM 底层调优、垃圾分配控制。</p>
-                <div class="h-1 w-full bg-slate-200 rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-orange-400 to-amber-500" style="width: 95%;"></div>
-                </div>
-                <span class="text-[10px] font-bold text-orange-500 mt-1.5 block text-right">95%</span>
             </div>
 
-            <!-- 技能 2 -->
-            <div class="vision-glass p-5 rounded-2xl glass-hover-active" data-aos="zoom-in" style="animation-delay: 0.1s;">
-                <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/15 flex items-center justify-center text-emerald-600 text-lg mb-4">
-                    <i class="fa-solid fa-leaf"></i>
+            <!-- 3. 音乐风格 (Doughnut Chart) -->
+            <div class="vision-glass p-10 rounded-[40px]" data-aos="fade-up">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 class="font-bold text-sm flex items-center space-x-2 text-slate-700">
+                        <i class="fa-solid fa-compact-disc text-blue-500"></i>
+                        <span>音乐风格倾向 / Music Styles</span>
+                    </h3>
                 </div>
-                <h3 class="font-bold text-sm mb-1 text-slate-800">SpringBoot</h3>
-                <p class="text-[10px] text-slate-500 mb-3">微服务注册链、拦截器链开发、高响应 REST。 </p>
-                <div class="h-1 w-full bg-slate-200 rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-emerald-400 to-teal-500" style="width: 92%;"></div>
+                <div class="h-72 relative flex items-center justify-center">
+                    <canvas id="musicChart"></canvas>
                 </div>
-                <span class="text-[10px] font-bold text-emerald-500 mt-1.5 block text-right">92%</span>
             </div>
 
-            <!-- 技能 3 -->
-            <div class="vision-glass p-5 rounded-2xl glass-hover-active" data-aos="zoom-in" style="animation-delay: 0.2s;">
-                <div class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/15 flex items-center justify-center text-blue-600 text-lg mb-4">
-                    <i class="fa-solid fa-database"></i>
+            <!-- 4. 健康数据 (Bar Chart) -->
+            <div class="vision-glass p-10 rounded-[40px]" data-aos="fade-up" style="animation-delay: 0.1s;">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 class="font-bold text-sm flex items-center space-x-2 text-slate-700">
+                        <i class="fa-solid fa-heart-pulse text-rose-500"></i>
+                        <span>健康数据追踪 / Health Metrics</span>
+                    </h3>
                 </div>
-                <h3 class="font-bold text-sm mb-1 text-slate-800">MySQL & Redis</h3>
-                <p class="text-[10px] text-slate-500 mb-3">复杂 SQL 的索引重构、分布式缓存一致性防范。</p>
-                <div class="h-1 w-full bg-slate-200 rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-blue-400 to-indigo-500" style="width: 90%;"></div>
+                <div class="h-72 relative">
+                    <canvas id="healthChart"></canvas>
                 </div>
-                <span class="text-[10px] font-bold text-blue-500 mt-1.5 block text-right">90%</span>
-            </div>
-
-            <!-- 技能 4 -->
-            <div class="vision-glass p-5 rounded-2xl glass-hover-active" data-aos="zoom-in" style="animation-delay: 0.3s;">
-                <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/15 flex items-center justify-center text-cyan-600 text-lg mb-4">
-                    <i class="fa-brands fa-vuejs"></i>
-                </div>
-                <h3 class="font-bold text-sm mb-1 text-slate-800">Vue & Tailwind</h3>
-                <p class="text-[10px] text-slate-500 mb-3">高透液态磨砂与极窄白边的高级响应式前端系统开发。</p>
-                <div class="h-1 w-full bg-slate-200 rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-cyan-400 to-blue-500" style="width: 88%;"></div>
-                </div>
-                <span class="text-[10px] font-bold text-cyan-500 mt-1.5 block text-right">88%</span>
             </div>
         </div>
     </section>
@@ -566,9 +282,9 @@
             <span>项目展示 / Selected Projects</span>
         </h2>
 
-        <!-- 双通道接口渲染网格 -->
+        <!-- 异步项目流渲染网格 -->
         <div id="project-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- 骨架 -->
+            <!-- 骨架屏占位 -->
             <div class="vision-glass p-6 rounded-[28px] h-60 animate-pulse flex flex-col justify-between">
                 <div class="h-4 bg-slate-200 rounded w-1/3"></div>
                 <div class="h-16 bg-slate-200 rounded"></div>
@@ -577,7 +293,7 @@
         </div>
     </section>
 
-    <!-- 6. BLOG SECTION (支持动漫级沉浸式跳转阅读) -->
+    <!-- 6. BLOG SECTION -->
     <section id="blog" class="py-16 max-w-5xl mx-auto">
         <h2 class="text-2xl font-black mb-10 flex items-center space-x-3 text-slate-800">
             <i class="fa-solid fa-feather-pointed text-amber-400 text-xl"></i>
@@ -585,7 +301,7 @@
         </h2>
 
         <div id="article-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- 骨架 -->
+            <!-- 骨架屏占位 -->
             <div class="vision-glass p-6 rounded-2xl h-44 animate-pulse flex flex-col justify-between">
                 <div class="h-4 bg-slate-200 rounded w-2/3"></div>
                 <div class="h-12 bg-slate-200 rounded"></div>
@@ -594,7 +310,7 @@
         </div>
     </section>
 
-    <!-- 7. 推荐书籍（拆分：独立于“灵感与最爱”） -->
+    <!-- 7. 推荐书籍 -->
     <section id="books" class="py-16 max-w-5xl mx-auto">
         <h2 class="text-2xl font-black mb-10 flex items-center space-x-3 text-slate-800">
             <i class="fa-solid fa-book text-amber-500 text-xl"></i>
@@ -603,172 +319,49 @@
 
         <div class="vision-glass p-7 rounded-[32px]">
             <div class="flex items-center justify-between mb-6">
-                <p class="text-xs text-slate-600 font-semibold">真实书籍封面 · 3D 轴向透视旋转</p>
+                <p class="text-xs text-slate-600 font-semibold">书籍收藏档案 · 3D 轴向透视旋转</p>
                 <span class="text-[10px] bg-slate-200/50 px-2.5 py-1 rounded-full text-slate-600 font-bold">Hover to rotate</span>
             </div>
 
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-6 justify-items-center">
-                <!-- 书 1：Clean Code -->
-                <div class="book-shelf flex flex-col items-center cursor-pointer book-container" onclick="showDetail('Clean Code', 'Robert C. Martin：关于可读性、可维护性与工程纪律的经典。')">
-                    <div class="w-24 h-36 relative">
-                        <div class="book3d-wrapper">
-                            <div class="book3d-pages"></div>
-                            <div class="book3d-spine" style="background: linear-gradient(90deg, rgba(15,23,42,0.95), rgba(37,99,235,0.85));"></div>
-                            <div class="book3d-cover" style="background-image:url('https://covers.openlibrary.org/b/isbn/9780132350884-L.jpg'); background-size:cover; background-position:center;">
-                                <div class="book3d-shine"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <h4 class="text-[11px] font-bold text-slate-700 mt-3 text-center">Clean Code</h4>
-                </div>
-
-                <!-- 书 2：Effective Java -->
-                <div class="book-shelf flex flex-col items-center cursor-pointer book-container" onclick="showDetail('Effective Java', 'Joshua Bloch：Java 设计与最佳实践的“守则”。')">
-                    <div class="w-24 h-36 relative">
-                        <div class="book3d-wrapper">
-                            <div class="book3d-pages"></div>
-                            <div class="book3d-spine" style="background: linear-gradient(90deg, rgba(15,23,42,0.95), rgba(99,102,241,0.85));"></div>
-                            <div class="book3d-cover" style="background-image:url('https://covers.openlibrary.org/b/isbn/9780134685991-L.jpg'); background-size:cover; background-position:center;">
-                                <div class="book3d-shine"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <h4 class="text-[11px] font-bold text-slate-700 mt-3 text-center">Effective Java</h4>
-                </div>
-
-                <!-- 书 3：DDIA -->
-                <div class="book-shelf flex flex-col items-center cursor-pointer book-container" onclick="showDetail('Designing Data-Intensive Applications', 'Martin Kleppmann：从存储、复制到一致性，构建系统的底层逻辑。')">
-                    <div class="w-24 h-36 relative">
-                        <div class="book3d-wrapper">
-                            <div class="book3d-pages"></div>
-                            <div class="book3d-spine" style="background: linear-gradient(90deg, rgba(2,6,23,0.95), rgba(16,185,129,0.85));"></div>
-                            <div class="book3d-cover" style="background-image:url('https://covers.openlibrary.org/b/isbn/9781449373320-L.jpg'); background-size:cover; background-position:center;">
-                                <div class="book3d-shine"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <h4 class="text-[11px] font-bold text-slate-700 mt-3 text-center">DDIA</h4>
-                </div>
-
-                <!-- 书 4：Clean Architecture -->
-                <div class="book-shelf flex flex-col items-center cursor-pointer book-container" onclick="showDetail('Clean Architecture', 'Robert C. Martin：架构分层、边界与可演化系统。')">
-                    <div class="w-24 h-36 relative">
-                        <div class="book3d-wrapper">
-                            <div class="book3d-pages"></div>
-                            <div class="book3d-spine" style="background: linear-gradient(90deg, rgba(15,23,42,0.95), rgba(245,158,11,0.85));"></div>
-                            <div class="book3d-cover" style="background-image:url('https://covers.openlibrary.org/b/isbn/9780134494166-L.jpg'); background-size:cover; background-position:center;">
-                                <div class="book3d-shine"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <h4 class="text-[11px] font-bold text-slate-700 mt-3 text-center">Clean Architecture</h4>
-                </div>
+            <div id="bookshelf-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-6 justify-items-center">
+                <!-- 由 JS 驱动渲染 -->
             </div>
         </div>
     </section>
 
-    <!-- 8. 灵感与最爱（拆分：由电影组成） -->
-    <section id="movies" class="py-16 max-w-5xl mx-auto">
-        <h2 class="text-2xl font-black mb-10 flex items-center space-x-3 text-slate-800">
-            <i class="fa-solid fa-heart text-rose-500 text-xl"></i>
-            <span>灵感与最爱 / Movies</span>
-        </h2>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="vision-glass p-4 rounded-[28px] glass-hover-active cursor-pointer" onclick="showDetail('Inception / 盗梦空间', '结构主义叙事与“层级世界”的完美工程；像写系统一样写梦。')">
-                <div class="movie-card aspect-[3/4] rounded-[22px] overflow-hidden">
-                    <div class="poster" style="background-image:url('https://upload.wikimedia.org/wikipedia/en/7/7f/Inception_ver3.jpg');"></div>
-                    <div class="meta absolute bottom-0 left-0 right-0 p-4">
-                        <span class="text-[9px] font-black uppercase tracking-widest text-rose-200">Favorite</span>
-                        <h4 class="text-white font-extrabold text-sm mt-1 leading-tight">Inception</h4>
-                        <p class="text-white/80 text-[10px] mt-1">2010 · Nolan</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="vision-glass p-4 rounded-[28px] glass-hover-active cursor-pointer" onclick="showDetail('Interstellar / 星际穿越', '时间、引力与亲情：把“极限条件”写成诗。')">
-                <div class="movie-card aspect-[3/4] rounded-[22px] overflow-hidden">
-                    <div class="poster" style="background-image:url('https://upload.wikimedia.org/wikipedia/en/b/bc/Interstellar_film_poster.jpg');"></div>
-                    <div class="meta absolute bottom-0 left-0 right-0 p-4">
-                        <span class="text-[9px] font-black uppercase tracking-widest text-sky-200">Space</span>
-                        <h4 class="text-white font-extrabold text-sm mt-1 leading-tight">Interstellar</h4>
-                        <p class="text-white/80 text-[10px] mt-1">2014 · Nolan</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="vision-glass p-4 rounded-[28px] glass-hover-active cursor-pointer" onclick="showDetail('The Matrix / 黑客帝国', '选择红药丸：秩序、系统、真实与反叛。')">
-                <div class="movie-card aspect-[3/4] rounded-[22px] overflow-hidden">
-                    <div class="poster" style="background-image:url('https://upload.wikimedia.org/wikipedia/en/c/c1/The_Matrix_Poster.jpg');"></div>
-                    <div class="meta absolute bottom-0 left-0 right-0 p-4">
-                        <span class="text-[9px] font-black uppercase tracking-widest text-emerald-200">System</span>
-                        <h4 class="text-white font-extrabold text-sm mt-1 leading-tight">The Matrix</h4>
-                        <p class="text-white/80 text-[10px] mt-1">1999 · Wachowski</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 9. 健康心得（按导航结构补齐） -->
+    <!-- 9. 健康心得 -->
     <section id="health" class="py-16 max-w-5xl mx-auto">
         <h2 class="text-2xl font-black mb-10 flex items-center space-x-3 text-slate-800">
             <i class="fa-solid fa-heart-pulse text-rose-500 text-xl"></i>
             <span>健康心得</span>
         </h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="vision-glass p-8 rounded-[32px] glass-hover-active">
-                <h3 class="font-black text-slate-800 mb-3">高强度编码的“恢复公式”</h3>
-                <p class="text-slate-600 text-sm leading-relaxed">把精力当作吞吐：训练/睡眠/饮食就是你的三套限流器。稳定的恢复，才能持续输出高质量架构。</p>
-                <div class="mt-6 flex flex-wrap gap-2">
-                    <span class="text-[10px] font-bold bg-slate-200/60 px-3 py-1 rounded-full text-slate-700">睡眠优先</span>
-                    <span class="text-[10px] font-bold bg-slate-200/60 px-3 py-1 rounded-full text-slate-700">力量训练</span>
-                    <span class="text-[10px] font-bold bg-slate-200/60 px-3 py-1 rounded-full text-slate-700">轻断糖</span>
-                </div>
-            </div>
-            <div class="vision-glass p-8 rounded-[32px] glass-hover-active">
-                <h3 class="font-black text-slate-800 mb-3">久坐警报：每 55 分钟一次“重启”</h3>
-                <p class="text-slate-600 text-sm leading-relaxed">站立 + 肩颈活动 2 分钟，等同于给大脑线程做一次安全回收，避免注意力泄漏。</p>
-                <button class="mt-6 px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-full font-bold text-xs transition-all active:scale-95" onclick="showDetail('久坐重启', '建议：55分钟专注 + 2分钟站立活动；眼睛看远处 20 秒；喝水。')">查看细节</button>
-            </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="habits-display-grid">
+            <!-- 由 JS 驱动渲染 -->
         </div>
     </section>
 
-    <!-- 10. 感悟（按导航结构补齐） -->
+    <!-- 10. 感悟 -->
     <section id="insights" class="py-16 max-w-5xl mx-auto">
         <h2 class="text-2xl font-black mb-10 flex items-center space-x-3 text-slate-800">
             <i class="fa-solid fa-lightbulb text-amber-400 text-xl"></i>
             <span>感悟</span>
         </h2>
-        <div class="vision-glass p-10 rounded-[40px] glass-hover-active">
-            <p class="text-slate-700 text-lg leading-relaxed font-semibold">
-                “把复杂变简单不是删功能，而是找到系统的主旋律：<span class="text-indigo-600 font-black">边界</span>、<span class="text-blue-600 font-black">节奏</span>、<span class="text-rose-600 font-black">反馈</span>。”
-            </p>
-            <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="bg-white/45 border border-white/60 rounded-2xl p-5">
-                    <p class="text-[11px] text-slate-500 font-bold mb-2">边界</p>
-                    <p class="text-sm text-slate-700 leading-relaxed">模块边界清晰，协作就不会互相“污染”。</p>
-                </div>
-                <div class="bg-white/45 border border-white/60 rounded-2xl p-5">
-                    <p class="text-[11px] text-slate-500 font-bold mb-2">节奏</p>
-                    <p class="text-sm text-slate-700 leading-relaxed">性能的本质是节奏：缓存、队列与限流都在做同一件事。</p>
-                </div>
-                <div class="bg-white/45 border border-white/60 rounded-2xl p-5">
-                    <p class="text-[11px] text-slate-500 font-bold mb-2">反馈</p>
-                    <p class="text-sm text-slate-700 leading-relaxed">用户体验是“可预期的反馈”，就像系统的可观测性。</p>
-                </div>
+        <div id="insights-container" class="space-y-8">
+            <!-- 动态加载感悟卡片 -->
+            <div class="vision-glass p-10 rounded-[40px] animate-pulse h-40 flex items-center justify-center">
+                <p class="text-slate-400 text-sm">正在同步最新感悟...</p>
             </div>
         </div>
     </section>
 
-    <!-- 8. CONTACT SECTION -->
+    <!-- 11. CONTACT SECTION -->
     <section id="contact" class="py-16 max-w-3xl mx-auto">
         <div class="vision-glass p-8 rounded-[32px] shadow-xl relative overflow-hidden" data-aos="zoom-in">
             <h2 class="text-2xl font-black mb-3 text-slate-800">联系我 / Contact Me</h2>
             <p class="text-slate-500 text-xs mb-8">
-                有高吞吐底层系统规划，或者寻求一位兼具像素美学细节的全栈极客？随时在此留下您的信息。
+                寻求一位兼具像素美学细节的全栈极客？随时在此留下您的信息。
             </p>
-            <form id="messageForm" class="space-y-4">
+            <form id="messageForm" class="space-y-4" onsubmit="submitFeedback(event)">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <input type="text" id="msgName" placeholder="您的姓名" required class="bg-white/50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-all">
                     <input type="email" id="msgEmail" placeholder="您的电子邮箱" required class="bg-white/50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-all">
@@ -783,21 +376,13 @@
     </section>
 
     <!-- Footer -->
-    <footer class="text-center text-[10px] text-slate-500 py-8 border-t border-slate-200/50 max-w-5xl mx-auto">
+    <footer class="text-center text-[10px] text-slate-500 py-8 border-t border-slate-200/50 max-w-5xl mx-auto animate-pulse">
         © 2026 HuZhe Portfolio. White-Gray Liquid Aesthetic & High End Presentation.
     </footer>
 </main>
 
-<!-- ================================================== -->
-<!-- 9. 动漫视差轴全屏博客沉浸详情页路由层 -->
-<!-- ================================================== -->
+<!-- 12. 动漫视差轴全屏博客沉浸详情页 -->
 <div id="blog-detail-view" class="fixed inset-0 z-50 bg-[#f3f5f8] overflow-y-auto hidden">
-    <div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <div class="fluid-blob w-[450px] h-[450px] bg-blue-200 top-20 right-20"></div>
-        <div class="fluid-blob w-[350px] h-[350px] bg-indigo-200 bottom-20 left-20" style="animation-delay:-5s;"></div>
-    </div>
-
-    <!-- 顶浮层 -->
     <div class="sticky top-0 z-30 w-full vision-glass px-6 py-4 flex justify-between items-center shadow-sm">
         <button onclick="closeBlogDetail()" class="flex items-center space-x-2 px-4 py-2 rounded-full bg-white/60 hover:bg-white text-xs font-bold transition-all text-slate-700 border border-slate-200 shadow-sm active:scale-95">
             <i class="fa-solid fa-arrow-left"></i>
@@ -830,9 +415,38 @@
     </div>
 </div>
 
-<!-- ================================================== -->
-<!-- 10. 高透白色流光小弹窗 (灵感收藏详情专用) -->
-<!-- ================================================== -->
+<!-- 13. 项目详情弹窗 -->
+<div id="project-detail-modal" class="fixed inset-0 bg-slate-900/30 backdrop-blur-md z-50 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
+    <div class="vision-glass p-8 rounded-[32px] max-w-lg w-full mx-4 relative transform scale-95 transition-all duration-300">
+        <button onclick="closeProjectModal()" class="absolute top-6 right-6 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition-all active:scale-95">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div class="aspect-video w-full rounded-2xl overflow-hidden bg-slate-100 border border-slate-200/50 mb-6 shadow-inner">
+            <img id="modal-proj-image" class="w-full h-full object-cover">
+        </div>
+        <div class="space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 id="modal-proj-title" class="text-xl font-bold text-slate-800">项目名称</h3>
+                <span id="modal-proj-tech" class="text-[10px] font-black text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full">--</span>
+            </div>
+            <p id="modal-proj-desc" class="text-slate-600 text-xs leading-relaxed bg-white/10 p-4 rounded-2xl border border-white/20">
+                --
+            </p>
+            <div class="flex justify-end space-x-3 pt-4">
+                <a id="modal-proj-github" target="_blank" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 rounded-xl text-xs font-bold text-slate-700 transition-all flex items-center space-x-1.5">
+                    <i class="fa-brands fa-github text-sm"></i>
+                    <span>GitHub 源码</span>
+                </a>
+                <a id="modal-proj-demo" target="_blank" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 rounded-xl text-xs font-bold text-white transition-all flex items-center space-x-1.5 shadow-md shadow-indigo-600/10">
+                    <i class="fa-solid fa-rocket text-sm"></i>
+                    <span>立即体验</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 14. 通用弹窗 -->
 <div id="fluidModal" class="fixed inset-0 bg-black/40 backdrop-blur-md z-50 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
     <div class="vision-glass p-8 rounded-[32px] max-w-md w-full mx-4 relative transform scale-90 transition-all duration-300 shadow-xl border border-white/80">
         <button onclick="closeModal()" class="absolute top-5 right-5 w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition-all active:scale-95">
@@ -849,696 +463,17 @@
     </div>
 </div>
 
-<!-- 代码1特效融合：Toast 提示 -->
 <div id="toastNotification" class="fixed bottom-6 right-6 px-6 py-4 rounded-2xl text-white font-bold shadow-2xl transition-all duration-500 translate-y-20 opacity-0 z-[2000]"></div>
 
-<!-- 依赖脚本引入 -->
+<!-- 外部依赖引入 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
 
-<script>
-    const BASE_URL = "http://localhost:8080";
+<!-- 主逻辑 -->
+<script src="/js/home.js"></script>
 
-    // 自抗震 Mock 数据
-    const mockProjects = [
-        { id: 1, title: "极简液态玻璃博客系统", description: "基于 SpringBoot + MySQL + JWT + Vue，拥有苹果官网级别的动效和极致全栈交互表现。" },
-        { id: 2, title: "云端智能物流调度系统", description: "利用 Java 集合框架和多线程技术优化高吞吐量的黄冈集货中心核心节点管理方案。" },
-        { id: 3, title: "点餐管理后台", description: "Java Web 标准架构，多端自适应布局，支持高负载状态下并发订单的快速解析与存储。" }
-    ];
-
-    const mockArticles = [
-        {
-            id: 1,
-            title: "探究 JVM 类加载器底层的多重反射机制",
-            summary: "如何基于 JVM 双亲委派模型深度重塑核心隔离环境的 Class 载入逻辑，并解决多服务并存下的依赖包冲突难题。",
-            content: `<h3>一、类加载核心与双亲委派</h3><p>在传统的Java虚拟机中，类加载采用双亲委派模型以保证核心库Class的绝对安全，然而，当面临热插拔部署或复杂的第三方类库冲突时，传统的委派逻辑往往会阻碍模块间的安全调用。</p><h3>二、多反射的技术穿透</h3><p>反射机制提供了高维的内部穿透能力，允许我们在运行时通过获取其私有的defineClass或调用隐藏装载方法来突破委派界限。这在设计模块隔离的复杂系统时，往往能取得惊人的突破。</p><h3>三、多线程高吞吐调优</h3><p>频繁调用反射会有一定的解析成本，在高并发调用的SpringBoot控制器中，应优先采用MethodHandle句柄或提前生成的代理字节码进行性能缓冲，以确保QPS高水位下的稳定性。</p>`
-        },
-        {
-            id: 2,
-            title: "SpringBoot 跨域(CORS)策略深度配置指南",
-            summary: "针对现代前后端分离单页应用中，彻底解决 Preflight 请求阻断及跨源权限共享的完美方案。",
-            content: `<h3>一、跨源阻拦与预检Options</h3><p>同源安全策略(SOP)是浏览器核心的防护标准，但在现代前后端分离设计中，常常因域名或端口不同而导致跨域阻隔。尤其在使用自定义权标Header头或发送PUT、DELETE请求时，浏览器会先行发送预检OPTIONS请求。</p><h3>二、最优全局SpringBoot配置类</h3><p>通过实现WebMvcConfigurer，对全局请求前置拦截。配置中允许credentials携带Cookie并适配泛解析OriginPattern，可彻底击碎各浏览器的预检请求阻拦红字报错，保证在单页系统开发和本地联机阶段无障碍通信。</p>`
-        }
-    ];
-
-    let blogDataCache = [];
-
-    // ==========================================
-    // 1. Three.js WebGL 3D星云连线拓扑背景
-    // 星云粒子、深度粒子、鼠标引力吸附、粒子自动连线
-    // ==========================================
-    let scene, camera, renderer, starCount = 350;
-    let starsGeometry, starsPoints;
-    let starPositions = [];
-    let starVelocities = [];
-    let linesMesh;
-
-    function initThree() {
-        const container = document.getElementById('three-container');
-        if (!container) return;
-        if (typeof THREE === 'undefined') return;
-
-        scene = new THREE.Scene();
-        camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
-        camera.position.z = 180;
-
-        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        container.appendChild(renderer.domElement);
-
-        starsGeometry = new THREE.BufferGeometry();
-        const positions = new Float32Array(starCount * 3);
-
-        for (let i = 0; i < starCount; i++) {
-            const x = Math.random() * 400 - 200;
-            const y = Math.random() * 400 - 200;
-            const z = Math.random() * 200 - 100;
-
-            positions[i*3] = x;
-            positions[i*3+1] = y;
-            positions[i*3+2] = z;
-
-            starPositions.push({ x, y, z, origX: x, origY: y, origZ: z });
-            starVelocities.push({
-                x: (Math.random() - 0.5) * 0.15,
-                y: (Math.random() - 0.5) * 0.15,
-                z: (Math.random() - 0.5) * 0.1
-            });
-        }
-
-        starsGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-
-        // 渲染粒子发光片
-        const canvas = document.createElement('canvas');
-        canvas.width = 16;
-        canvas.height = 16;
-        const ctx = canvas.getContext('2d');
-        const grad = ctx.createRadialGradient(8, 8, 0, 8, 8, 8);
-        grad.addColorStop(0, 'rgba(99, 102, 241, 0.5)');
-        grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, 16, 16);
-
-        const texture = new THREE.CanvasTexture(canvas);
-        const starsMaterial = new THREE.PointsMaterial({
-            size: 2.2,
-            map: texture,
-            transparent: true,
-            blending: THREE.NormalBlending,
-            depthWrite: false
-        });
-
-        starsPoints = new THREE.Points(starsGeometry, starsMaterial);
-        scene.add(starsPoints);
-
-        // 初始化画线的连线材质
-        const lineMaterial = new THREE.LineBasicMaterial({
-            color: 0x6366f1,
-            transparent: true,
-            opacity: 0.12,
-            blending: THREE.AdditiveBlending
-        });
-        const lineGeometry = new THREE.BufferGeometry();
-        linesMesh = new THREE.LineSegments(lineGeometry, lineMaterial);
-        scene.add(linesMesh);
-
-        // 鼠标感应吸附配置
-        let mouseX = 0, mouseY = 0;
-        let raycaster = new THREE.Raycaster();
-        let mouseVec = new THREE.Vector2(-9999, -9999);
-
-        window.addEventListener('mousemove', (e) => {
-            mouseX = (e.clientX - window.innerWidth / 2) * 0.02;
-            mouseY = (e.clientY - window.innerHeight / 2) * 0.02;
-
-            mouseVec.x = (e.clientX / window.innerWidth) * 2 - 1;
-            mouseVec.y = -(e.clientY / window.innerHeight) * 2 + 1;
-        });
-
-        function animate() {
-            requestAnimationFrame(animate);
-
-            const posArr = starsGeometry.attributes.position.array;
-
-            // 计算鼠标在 3D 空间内的投影引力中心
-            raycaster.setFromCamera(mouseVec, camera);
-            let targetPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
-            let mouseIntersection = new THREE.Vector3();
-            raycaster.ray.intersectPlane(targetPlane, mouseIntersection);
-
-            // 粒子漂移与鼠标吸引逻辑
-            for (let i = 0; i < starCount; i++) {
-                let p = starPositions[i];
-                let vel = starVelocities[i];
-
-                p.x += vel.x;
-                p.y += vel.y;
-                p.z += vel.z;
-
-                // 边界反弹
-                if (Math.abs(p.x) > 200) vel.x *= -1;
-                if (Math.abs(p.y) > 200) vel.y *= -1;
-                if (Math.abs(p.z) > 100) vel.z *= -1;
-
-                // 鼠标吸附力
-                if (mouseVec.x !== -9999) {
-                    let dx = mouseIntersection.x - p.x;
-                    let dy = mouseIntersection.y - p.y;
-                    let dist = Math.sqrt(dx*dx + dy*dy);
-                    if (dist > 0.01 && dist < 45) {
-                        let force = (45 - dist) * 0.015;
-                        p.x += (dx / dist) * force;
-                        p.y += (dy / dist) * force;
-                    }
-                }
-
-                posArr[i*3] = p.x;
-                posArr[i*3+1] = p.y;
-                posArr[i*3+2] = p.z;
-            }
-            starsGeometry.attributes.position.needsUpdate = true;
-
-            // 粒子连线拓扑逻辑
-            let linePositions = [];
-            for (let i = 0; i < starCount; i++) {
-                let pA = starPositions[i];
-                for (let j = i + 1; j < starCount; j++) {
-                    let pB = starPositions[j];
-                    let dx = pA.x - pB.x;
-                    let dy = pA.y - pB.y;
-                    let dz = pA.z - pB.z;
-                    let distSq = dx*dx + dy*dy + dz*dz;
-                    if (distSq < 700) { // 拓扑连线距离阈值
-                        linePositions.push(pA.x, pA.y, pA.z);
-                        linePositions.push(pB.x, pB.y, pB.z);
-                    }
-                }
-            }
-
-            linesMesh.geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(linePositions), 3));
-            linesMesh.geometry.attributes.position.needsUpdate = true;
-
-            // 缓慢旋转与视差偏置
-            starsPoints.rotation.y += 0.0004;
-            linesMesh.rotation.y += 0.0004;
-
-            camera.position.x += (mouseX - camera.position.x) * 0.05;
-            camera.position.y += (-mouseY - camera.position.y) * 0.05;
-
-            renderer.render(scene, camera);
-        }
-        animate();
-    }
-
-    // ==========================================
-    // 2. Chart.js 数据曲线
-    // ==========================================
-    function initCharts() {
-        if (typeof Chart === 'undefined') return;
-
-        const ctxTimeline = document.getElementById('timelineChart');
-        if (ctxTimeline) {
-            new Chart(ctxTimeline, {
-                type: 'line',
-                data: {
-                    labels: ['10岁', '13岁', '15岁', '17岁', '19岁(现在)'],
-                    datasets: [
-                        {
-                            label: '阅读内容',
-                            data: [82, 85, 75, 60, 95],
-                            borderColor: 'rgba(99, 102, 241, 0.9)',
-                            backgroundColor: 'rgba(99, 102, 241, 0.02)',
-                            fill: true,
-                            tension: 0.4
-                        },
-                        {
-                            label: '健身内容',
-                            data: [0, 0, 30, 80, 95], // 15岁起爆发生长
-                            borderColor: 'rgba(239, 68, 68, 0.9)',
-                            backgroundColor: 'rgba(239, 68, 68, 0.02)',
-                            fill: true,
-                            tension: 0.4
-                        },
-                        {
-                            label: '音乐',
-                            data: [60, 72, 78, 85, 92],
-                            borderColor: 'rgba(14, 165, 233, 0.8)',
-                            backgroundColor: 'rgba(14, 165, 233, 0.01)',
-                            fill: true,
-                            tension: 0.4
-                        },
-                        {
-                            label: '海边景色',
-                            data: [20, 35, 45, 55, 70],
-                            borderColor: 'rgba(16, 185, 129, 0.8)',
-                            backgroundColor: 'rgba(16, 185, 129, 0.01)',
-                            fill: true,
-                            tension: 0.4
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { labels: { color: 'rgba(30, 41, 59, 0.7)', font: { size: 9, weight: 'bold' } } }
-                    },
-                    scales: {
-                        y: { grid: { color: 'rgba(0, 0, 0, 0.03)' }, ticks: { color: 'rgba(30, 41, 59, 0.5)', font: { size: 9 } } },
-                        x: { grid: { display: false }, ticks: { color: 'rgba(30, 41, 59, 0.5)', font: { size: 9 } } }
-                    }
-                }
-            });
-        }
-
-        // 学科探索雷达图
-        const ctxMovie = document.getElementById('movieChart');
-        if (ctxMovie) {
-            new Chart(ctxMovie, {
-                type: 'radar',
-                data: {
-                    labels: ['哲学', '心理学', '社会学', '历史学', '经济学'],
-                    datasets: [{
-                        label: '探索偏好',
-                        data: [95, 80, 75, 88, 82],
-                        borderColor: 'rgba(139, 92, 246, 0.8)',
-                        backgroundColor: 'rgba(139, 92, 246, 0.1)'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        r: {
-                            grid: { color: 'rgba(0, 0, 0, 0.04)' },
-                            pointLabels: { color: 'rgba(30, 41, 59, 0.7)', font: { size: 8, weight: 'bold' } },
-                            ticks: { display: false }
-                        }
-                    }
-                }
-            });
-        }
-
-        // 音乐分类环形图 (古典、纯音乐、电子浩室、鼓贝斯、Techno、流行周杰伦/孙燕姿)
-        const ctxAlbum = document.getElementById('albumChart');
-        if (ctxAlbum) {
-            new Chart(ctxAlbum, {
-                type: 'doughnut',
-                data: {
-                    labels: ['古典音乐', '纯音乐', '电子浩室', '鼓贝斯', 'Techno', '周杰伦/孙燕姿'],
-                    datasets: [{
-                        data: [15, 20, 15, 10, 10, 30],
-                        backgroundColor: [
-                            'rgba(99, 102, 241, 0.6)',
-                            'rgba(14, 165, 233, 0.6)',
-                            'rgba(16, 185, 129, 0.6)',
-                            'rgba(139, 92, 246, 0.6)',
-                            'rgba(100, 116, 139, 0.6)',
-                            'rgba(236, 72, 153, 0.6)'
-                        ],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: { color: 'rgba(30, 41, 59, 0.7)', font: { size: 9, weight: 'bold' } }
-                        }
-                    }
-                }
-            });
-        }
-    }
-
-    // ==========================================
-    // 3. 轮播淡入淡出流转
-    // ==========================================
-    let carouselIdx = 0;
-    const carouselTotal = 6;
-    const carouselLabels = [
-        "生活记录：远处海边景色",
-        "行迹足迹：自然山径",
-        "静心片刻：森林呼吸",
-        "风与雪线：高山远望",
-        "城市之外：地平线",
-        "夜色降临：深蓝静默"
-    ];
-    function startCarousel() {
-        setInterval(() => {
-            const currentImg = document.getElementById(`carousel-img-${carouselIdx + 1}`);
-            const currentDot = document.getElementById(`dot-${carouselIdx}`);
-            if (!currentImg || !currentDot) return;
-
-            currentImg.style.opacity = '0';
-            currentDot.classList.remove('bg-slate-400');
-            currentDot.classList.add('bg-slate-200');
-
-            carouselIdx = (carouselIdx + 1) % carouselTotal;
-
-            const nextImg = document.getElementById(`carousel-img-${carouselIdx + 1}`);
-            const nextDot = document.getElementById(`dot-${carouselIdx}`);
-            if (!nextImg || !nextDot) return;
-
-            nextImg.style.opacity = '1';
-            nextDot.classList.remove('bg-slate-200');
-            nextDot.classList.add('bg-slate-400');
-
-            const label = document.getElementById('carousel-label');
-            if (label) label.textContent = carouselLabels[carouselIdx];
-        }, 5000);
-    }
-
-    // ==========================================
-    // 4. 数据调度拉取
-    // ==========================================
-    async function requestApi(url) {
-        try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 1800);
-            const res = await fetch(BASE_URL + url, { signal: controller.signal });
-            clearTimeout(timeoutId);
-            if (!res.ok) return null;
-            const data = await res.json();
-            return data.code === 200 ? data.data : data;
-        } catch (e) {
-            return null;
-        }
-    }
-
-    async function loadDynamicPortfolio() {
-        // 项目
-        const projContainer = document.getElementById("project-container");
-        if (projContainer) {
-            let projects = await requestApi("/project/list");
-            if (!projects || projects.length === 0) {
-                projects = mockProjects;
-            }
-            projContainer.innerHTML = projects.map(p => `
-                <div class="vision-glass p-6 rounded-[28px] glass-hover-active flex flex-col justify-between h-64 cursor-pointer relative overflow-hidden group" onclick="showDetail('${p.title}', '${p.description || '暂无详细描述。'}')">
-                    <div class="absolute -right-8 -bottom-8 w-24 h-24 bg-blue-500/5 rounded-full blur-2xl group-hover:scale-150 transition-all duration-500"></div>
-                    <div>
-                        <div class="flex justify-between items-start mb-4">
-                            <span class="text-[9px] font-black uppercase text-blue-600 bg-blue-500/10 px-2.5 py-0.5 rounded-full">Core App</span>
-                            <i class="fa-solid fa-arrow-up-right-from-square text-slate-400 group-hover:text-slate-800 transition-all text-xs"></i>
-                        </div>
-                        <h3 class="font-bold text-base text-slate-800 mb-2">${p.title}</h3>
-                        <p class="text-slate-500 text-[11px] leading-relaxed line-clamp-3">${p.description || '暂无项目描述。'}</p>
-                    </div>
-                    <div class="text-[10px] text-slate-400 flex items-center space-x-1.5 mt-4">
-                        <span>点击卡片交互查看详情</span>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // 博客
-        const artContainer = document.getElementById("article-container");
-        if (artContainer) {
-            let articles = await requestApi("/article/list");
-            if (!articles || articles.length === 0) {
-                articles = mockArticles;
-            }
-            blogDataCache = articles;
-            artContainer.innerHTML = articles.map(a => `
-                <div class="vision-glass p-6 rounded-2xl glass-hover-active flex flex-col justify-between h-48 cursor-pointer group" onclick="jumpToBlogDetail(${a.id})">
-                    <div>
-                        <span class="text-[9px] text-amber-600 font-bold uppercase tracking-widest block mb-2">Technical Blog</span>
-                        <h3 class="font-bold text-sm text-slate-800 mb-2 group-hover:text-blue-600 transition-colors">${a.title}</h3>
-                        <p class="text-slate-500 text-[11px] leading-relaxed line-clamp-2">${a.summary || '暂无摘要。'}</p>
-                    </div>
-                    <div class="text-[9px] text-slate-400 flex items-center space-x-2 mt-4">
-                        <i class="fa-solid fa-calendar-days text-slate-300"></i>
-                        <span>2026-06-05</span>
-                    </div>
-                </div>
-            `).join('');
-        }
-    }
-
-    // ==========================================
-    // 5. 博客视差详情阅读页
-    // ==========================================
-    window.jumpToBlogDetail = function(blogId) {
-        const article = blogDataCache.find(a => a.id === blogId);
-        if(!article) return;
-
-        document.getElementById('detail-title').textContent = article.title;
-        document.getElementById('detail-content').innerHTML = article.content || `<p>${article.summary}</p>`;
-
-        const detailView = document.getElementById('blog-detail-view');
-        detailView.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-
-        detailView.onscroll = () => {
-            const totalHeight = detailView.scrollHeight - detailView.clientHeight;
-            const scrollPercent = totalHeight > 0 ? Math.round((detailView.scrollTop / totalHeight) * 100) : 0;
-            document.getElementById('reading-progress').textContent = `阅读进度: ${scrollPercent}%`;
-        };
-    }
-
-    window.closeBlogDetail = function() {
-        document.getElementById('blog-detail-view').classList.add('hidden');
-        document.body.style.overflow = 'auto';
-    }
-
-    // ==========================================
-    // 6. 普通项详情弹窗
-    // ==========================================
-    window.showDetail = function(title, content) {
-        const modal = document.getElementById('fluidModal');
-        const modalTitle = document.getElementById('modalTitle');
-        const modalContent = document.getElementById('modalContent');
-
-        modalTitle.textContent = title;
-        modalContent.textContent = content;
-
-        modal.classList.remove('pointer-events-none', 'opacity-0');
-        modal.classList.add('opacity-100');
-        modal.querySelector('.vision-glass').classList.remove('scale-90');
-        modal.querySelector('.vision-glass').classList.add('scale-100');
-    }
-
-    window.closeModal = function() {
-        const modal = document.getElementById('fluidModal');
-        modal.classList.add('pointer-events-none', 'opacity-0');
-        modal.classList.remove('opacity-100');
-        modal.querySelector('.vision-glass').classList.add('scale-90');
-        modal.querySelector('.vision-glass').classList.remove('scale-100');
-    }
-
-    // ==========================================
-    // 7. 代码1特效融合：Toast 通知（用于联系表单等）
-    // ==========================================
-    function showToast(message) {
-        const toast = document.getElementById('toastNotification');
-        if (!toast) return;
-        toast.innerText = message;
-        toast.className = "fixed bottom-6 right-6 px-6 py-4 rounded-2xl text-white font-bold shadow-2xl transition-all duration-500 z-[2000] bg-gradient-to-r from-indigo-600 to-blue-500";
-
-        toast.style.transform = "translateY(0)";
-        toast.style.opacity = "1";
-
-        setTimeout(() => {
-            toast.style.transform = "translateY(100px)";
-            toast.style.opacity = "0";
-        }, 3000);
-    }
-
-    // ==========================================
-    // 8. Dock 导航：按可视区自动高亮（匹配截图体验）
-    // ==========================================
-    function initDockNavActive() {
-        const links = Array.from(document.querySelectorAll('a[data-nav]'));
-        if (!links.length) return;
-
-        const linkById = new Map();
-        const sections = [];
-
-        links.forEach(link => {
-            const hash = link.getAttribute('href') || '';
-            if (!hash.startsWith('#')) return;
-            const id = hash.slice(1);
-            const section = document.getElementById(id);
-            if (!section) return;
-            linkById.set(id, link);
-            sections.push(section);
-
-            // 点击时也立即高亮，避免等待 observer
-            link.addEventListener('click', () => {
-                links.forEach(l => l.classList.remove('active'));
-                link.classList.add('active');
-            });
-        });
-
-        const activateById = (id) => {
-            const target = linkById.get(id);
-            if (!target) return;
-            links.forEach(l => l.classList.remove('active'));
-            target.classList.add('active');
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            // 选“可见比例最高”的那个作为当前激活项
-            const visible = entries
-                .filter(e => e.isIntersecting)
-                .sort((a, b) => (b.intersectionRatio - a.intersectionRatio));
-            if (!visible.length) return;
-            activateById(visible[0].target.id);
-        }, {
-            root: null,
-            threshold: [0.22, 0.35, 0.5, 0.65],
-            rootMargin: "-15% 0px -70% 0px"
-        });
-
-        sections.forEach(sec => observer.observe(sec));
-
-        // 初始：按当前 hash 或 home
-        const initial = (location.hash || '#home').slice(1);
-        activateById(initial);
-    }
-
-    // ==========================================
-    // 9. 头像逃离系统（融合自代码1：阻尼回弹 + 距离推开）
-    // ==========================================
-    function initEvadeAvatar() {
-        const avatar = document.getElementById('evade-avatar');
-        if (!avatar) return;
-
-        let mouseX = 0, mouseY = 0;
-        let targetX = 0, targetY = 0;
-        let currentX = 0, currentY = 0;
-        const radius = 180;
-        const maxOffset = 70;
-
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-
-            const rect = avatar.getBoundingClientRect();
-            const cx = rect.left + rect.width / 2;
-            const cy = rect.top + rect.height / 2;
-            const dx = mouseX - cx;
-            const dy = mouseY - cy;
-            const dist = Math.hypot(dx, dy);
-
-            if (dist < radius) {
-                const force = (radius - dist) / radius;
-                const angle = Math.atan2(dy, dx);
-                targetX = -Math.cos(angle) * force * maxOffset;
-                targetY = -Math.sin(angle) * force * maxOffset;
-            } else {
-                targetX = 0;
-                targetY = 0;
-            }
-        });
-
-        function tick() {
-            currentX += (targetX - currentX) * 0.15;
-            currentY += (targetY - currentY) * 0.15;
-            avatar.style.setProperty('--evade-x', `${currentX.toFixed(2)}px`);
-            avatar.style.setProperty('--evade-y', `${currentY.toFixed(2)}px`);
-            requestAnimationFrame(tick);
-        }
-        tick();
-    }
-
-    // ==========================================
-    // 10. 初始化程序
-    // ==========================================
-    document.addEventListener('DOMContentLoaded', () => {
-        if (typeof AOS !== 'undefined') {
-            AOS.init({ duration: 800, once: true });
-        }
-
-        initThree();
-        initCharts();
-        startCarousel();
-        loadDynamicPortfolio();
-        initDockNavActive();
-        initEvadeAvatar();
-
-        // 代码1特效融合：鼠标光晕跟随
-        const glow = document.getElementById('cursor-glow');
-        document.addEventListener('mousemove', (e) => {
-            if (!glow) return;
-            glow.style.left = e.clientX + 'px';
-            glow.style.top = e.clientY + 'px';
-        });
-        document.addEventListener('mouseleave', () => {
-            if (!glow) return;
-            glow.style.opacity = '0';
-        });
-        document.addEventListener('mouseenter', () => {
-            if (!glow) return;
-            glow.style.opacity = '0.9';
-        });
-
-        // 磁吸式头像框 3D 悬离
-        const badge = document.getElementById('avatar-badge');
-        if(badge && typeof gsap !== 'undefined') {
-            badge.addEventListener('mousemove', (e) => {
-                const rect = badge.getBoundingClientRect();
-                const x = e.clientX - rect.left - rect.width/2;
-                const y = e.clientY - rect.top - rect.height/2;
-                gsap.to(badge, {
-                    rotationY: x * 0.04,
-                    rotationX: -y * 0.04,
-                    transformPerspective: 800,
-                    ease: 'power2.out',
-                    duration: 0.5
-                });
-            });
-            badge.addEventListener('mouseleave', () => {
-                gsap.to(badge, {
-                    rotationY: 0,
-                    rotationX: 0,
-                    ease: 'elastic.out(1, 0.3)',
-                    duration: 1.2
-                });
-            });
-        }
-
-        // 打字机
-        const typedTarget = document.getElementById('typed');
-        if (typedTarget && typeof Typed !== 'undefined') {
-            new Typed('#typed', {
-                strings: ['SpringBoot + Redis 专家', '全栈开发工程师', '液态磨砂视觉审美极客'],
-                typeSpeed: 60,
-                backSpeed: 30,
-                loop: true,
-                backDelay: 1500
-            });
-        } else if (typedTarget) {
-            typedTarget.textContent = '全栈开发工程师';
-        }
-
-        // 代码1特效融合：联系表单提交 Toast（不改变排版，仅增强反馈）
-        const messageForm = document.getElementById('messageForm');
-        if (messageForm) {
-            messageForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const name = (document.getElementById('msgName')?.value || '').trim();
-                showToast(name ? `你好 ${name}，你的留言已提交！` : '留言已提交！');
-                messageForm.reset();
-            });
-        }
-    });
-
-    window.addEventListener('resize', () => {
-        if(camera && renderer) {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-    });
-</script>
 </body>
 </html>
